@@ -19,12 +19,11 @@ var path = require('path');
 var fs = require('fs');
 var grpc = require('grpc');
 
-var hfc = require('fabric-client');
 var utils = require('fabric-client/lib/utils.js');
 var Peer = require('fabric-client/lib/Peer.js');
 var EventHub = require('fabric-client/lib/EventHub.js');
 
-var adminUser = null;
+var user = null;
 var tx_id = null;
 var nonce = null;
 
@@ -32,84 +31,48 @@ var config = require('../config.json')
 var helper = require('./helper.js');
 var logger = helper.getLogger('Join-Channel');
 
-hfc.addConfigFile(path.join(__dirname, 'network-config.json'));
-var ORGS = hfc.getConfigSetting('network-config');
+//helper.hfc.addConfigFile(path.join(__dirname, 'network-config.json'));
+var ORGS = helper.ORGS;
 
 var allEventhubs = [];
-
+//TODO: How do we handle this ?
 var _commonProto = grpc.load(path.join(__dirname, '../node_modules/fabric-client/lib/protos/common/common.proto')).common;
-var isSuccess = null;
 //
 //Attempt to send a request to the orderer with the sendCreateChain method
 //
-	logger.debug('\n============ Join Channel ============\n')
-	// on process exit, always disconnect the event hub
-	process.on('exit', function() {
-		if (isSuccess){
-			logger.debug('\n============ Join Channel is SUCCESS ============\n')
-		}else{
-			logger.debug('\n!!!!!!!! ERROR: Join Channel FAILED !!!!!!!!\n')
-		}
-		for(var key in allEventhubs) {
-			var eventhub = allEventhubs[key];
-			if (eventhub && eventhub.isconnected()) {
-				//logger.debug('Disconnecting the event hub');
-				eventhub.disconnect();
+
+var joinChannel = function (channelName, orderer, peers, username, org){
+
+		// on process exit, always disconnect the event hub
+		var closeConnections = function(isSuccess) {
+			if (isSuccess){
+				logger.debug('\n============ Join Channel is SUCCESS ============\n')
+			}else{
+				logger.debug('\n!!!!!!!! ERROR: Join Channel FAILED !!!!!!!!\n')
+			}
+			logger.debug('');
+			for(var key in allEventhubs) {
+				var eventhub = allEventhubs[key];
+				if (eventhub && eventhub.isconnected()) {
+					//logger.debug('Disconnecting the event hub');
+					eventhub.disconnect();
+				}
 			}
 		}
-	});
 
-	joinChannel(config.orgsList[0])
-	.then(() => {
-		logger.info(util.format('Successfully joined peers in organization "%s" to the channel', ORGS[config.orgsList[0]].name));
-		return joinChannel(config.orgsList[1]);
-	}, (err) => {
-		logger.error(util.format('Failed to join peers in organization "%s" to the channel. %s', ORGS[config.orgsList[0]].name, err.stack ? err.stack : err));
-		process.exit();
-	})
-	.then(() => {
-		logger.info(util.format('Successfully joined peers in organization "%s" to the channel', ORGS[config.orgsList[1]].name));
-		isSuccess = true;
-		process.exit();
-	}, (err) => {
-		logger.error(util.format('Failed to join peers in organization "%s" to the channel. %s', ORGS[config.orgsList[1]].name), err.stack ? err.stack : err);
-		process.exit();
-	})
-	.catch(function(err) {
-		logger.error('Failed request. ' + err);
-		process.exit();
-	});
-
-function joinChannel(org) {
+		//logger.debug('\n============ Join Channel ============\n')
 	logger.info(util.format('Calling peers in organization "%s" to join the channel', org));
 
-	//
-	// Create and configure the chain
-	//
-	var client = new hfc();
-	var chain = client.newChain(config.channelName);
+	helper.setupOrderer(orderer);
+  var chain = helper.getChainForOrg(org);
+	var targets = helper.getTargets(peers, org);
+	var eventhubs = [];
 
-	var orgName = ORGS[org].name;
-	var targets = [], eventhubs = [];
-
-	chain.addOrderer(
-		helper.getOrderer()
-	);
-
+	  //TODO: Change the logic to use the peers addressed from POST request
 	for (let key in ORGS[org]) {
 		if (ORGS[org].hasOwnProperty(key)) {
 			if (key.indexOf('peer') === 0) {
-				data = fs.readFileSync(path.join(__dirname, ORGS[org][key]['tls_cacerts']));
-				targets.push(
-					new Peer(
-						ORGS[org][key].requests,
-						{
-							pem: Buffer.from(data).toString(),
-							'ssl-target-name-override': ORGS[org][key]['server-hostname']
-						}
-					)
-				);
-
+				let data = fs.readFileSync(path.join(__dirname, ORGS[org][key]['tls_cacerts']));
 				let eh = new EventHub();
 				eh.setPeerAddr(
 					ORGS[org][key].events,
@@ -125,18 +88,12 @@ function joinChannel(org) {
 		}
 	}
 
-	return hfc.newDefaultKeyValueStore({
-        path: helper.getKeyStoreForOrg(orgName)
-	}).then((store) => {
-		client.setStateStore(store);
-        return helper.getSubmitter(client, org);
-	})
-	.then((admin) => {
-		logger.info('Successfully enrolled user \'admin\'');
-		adminUser = admin;
-
+	return helper.getAdminUser(org)
+	.then((member) => {
+		logger.info('received member object for user : '+username);
+		user = member;
 		nonce = utils.getNonce();
-		tx_id = chain.buildTransactionID(nonce, adminUser);
+		tx_id = chain.buildTransactionID(nonce, user);
 		var request = {
 			targets : targets,
 			txId : 	tx_id,
@@ -180,13 +137,20 @@ function joinChannel(org) {
 		logger.debug(util.format('Join Channel R E S P O N S E : %j', results));
 
 		if(results[0] && results[0][0] && results[0][0].response && results[0][0].response.status == 200) {
-			logger.info(util.format('Successfully joined peers in organization %s to join the channel', orgName));
+			logger.info(util.format('Successfully joined peers in organization %s to join the channel', org));
+			closeConnections(true);
+			return util.format('Successfully joined peers in organization %s to join the channel', org);
 		} else {
 			logger.error(' Failed to join channel');
-			throw new Error('Failed to join channel');
+			closeConnections();
+			//throw new Error('Failed to join channel');
+			return 'Failed to join channel';
 		}
 	}, (err) => {
 		logger.error('Failed to join channel due to error: ' + err.stack ? err.stack : err);
-		process.exit();
+		closeConnections();
+		return 'Failed to join channel due to error: ' + err.stack ? err.stack : err;
 	});
 }
+
+exports.joinChannel = joinChannel;

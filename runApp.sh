@@ -65,6 +65,6 @@ function execApp(){
 
 restartNetwork
 
-installNodeModules
+#installNodeModules
 
-execApp
+#execApp

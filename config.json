@@ -1,4 +1,6 @@
 {
+   "host":"loclahost",
+   "port":"4000",
    "chainName":"fabric-client1",
    "chaincodeId":"mycc",
    "channelName":"mychannel",

@@ -22,7 +22,6 @@ var path = require('path');
 var fs = require('fs');
 var util = require('util');
 
-var hfc = require('fabric-client');
 var utils = require('fabric-client/lib/utils.js');
 var Peer = require('fabric-client/lib/Peer.js');
 
@@ -30,68 +29,24 @@ var config = require('../config.json')
 var helper = require('./helper.js');
 var logger = helper.getLogger('install-chaincode');
 
-hfc.addConfigFile(path.join(__dirname, 'network-config.json'));
-var ORGS = hfc.getConfigSetting('network-config');
-
 var tx_id = null;
 var nonce = null;
 var adminUser = null;
 
-helper.setupChaincodeDeploy();
-
-	logger.debug('\n============ Install chaincode on organizations ============\n')
-	installChaincode(config.orgsList[0])
-	.then(() => {
-		logger.info('Successfully installed chaincode in peers of organization "'+config.orgsList[0]+'"');
-		return installChaincode(config.orgsList[1]);
-	}, (err) => {
-		logger.error('Failed to install chaincode in peers of organization"'+config.orgsList[0]+'". ' + err.stack ? err.stack : err);
-	}).then(() => {
-		logger.info('Successfully installed chaincode in peers of organization "'+config.orgsList[1]+'"');
-		logger.debug('\n============ Install chaincode on all organizations COMPLETED ============\n')
-	}, (err) => {
-		logger.error('Failed to install chaincode in peers of organization "'+config.orgsList[1]+'". ' + err.stack ? err.stack : err);
-	}).catch((err) => {
-		logger.error('Test failed due to unexpected reasons. ' + err.stack ? err.stack : err);
-	});
-
-function installChaincode(org) {
-	var client = new hfc();
-	var chain = client.newChain(config.channelName);
-
-	chain.addOrderer(
-		helper.getOrderer()
-	);
-
-	var orgName = ORGS[org].name;
-
-	var targets = [];
-	for (let key in ORGS[org]) {
-		if (ORGS[org].hasOwnProperty(key)) {
-			if (key.indexOf('peer') === 0) {
-				let data = fs.readFileSync(path.join(__dirname, ORGS[org][key]['tls_cacerts']));
-				let peer = new Peer(
-					ORGS[org][key].requests,
-					{
-						pem: Buffer.from(data).toString(),
-						'ssl-target-name-override': ORGS[org][key]['server-hostname']
-					}
-				);
-
-				targets.push(peer);
-				chain.addPeer(peer);
-			}
+//function installChaincode(org) {
+var installChaincode = function (orderer, peers, chaincodeName, chaincodePath, chaincodeVersion, username, org){
+    logger.debug('\n============ Install chaincode on organizations ============\n')
+		helper.setupChaincodeDeploy();
+		var chain = helper.getChainForOrg(org);
+		helper.setupOrderer(orderer);
+		var targets = helper.getTargets(peers, org);
+		for(var index in targets) {
+			chain.addPeer(targets[index]);
 		}
-	}
 
-	return hfc.newDefaultKeyValueStore({
-    path: helper.getKeyStoreForOrg(orgName)
-	}).then((store) => {
-		client.setStateStore(store);
-    return helper.getSubmitter(client, org);
-	}).then((admin) => {
-		logger.info('Successfully enrolled user \'admin\'');
-		adminUser = admin;
+		return helper.getAdminUser(org)
+		.then((member) => {
+		adminUser = member;
 
 		nonce = utils.getNonce();
 		tx_id = chain.buildTransactionID(nonce, adminUser);
@@ -99,9 +54,9 @@ function installChaincode(org) {
 		// send proposal to endorser
 		var request = {
 			targets: targets,
-			chaincodePath: config.chaincodePath,
-			chaincodeId: config.chaincodeId,
-			chaincodeVersion: config.chaincodeVersion,
+			chaincodePath: chaincodePath,
+			chaincodeId: chaincodeName,
+			chaincodeVersion: chaincodeVersion,
 			txId: tx_id,
 			nonce: nonce
 		};
@@ -129,8 +84,11 @@ function installChaincode(org) {
 		}
 		if (all_good) {
 			logger.info(util.format('Successfully sent install Proposal and received ProposalResponse: Status - %s', proposalResponses[0].response.status));
+			logger.debug('\n============ Install chaincode on organization '+org+' completed ============\n')
+			return '============ Install chaincode on organization '+org+' completed ============';
 		} else {
 			logger.error('Failed to send install Proposal or receive valid response. Response null or status is not 200. exiting...');
+			return 'Failed to send install Proposal or receive valid response. Response null or status is not 200. exiting...';
 		}
 	},
 	(err) => {
@@ -138,3 +96,4 @@ function installChaincode(org) {
 		throw new Error('Failed to send install proposal due to error: ' + err.stack ? err.stack : err);
 	});
 }
+exports.installChaincode = installChaincode;

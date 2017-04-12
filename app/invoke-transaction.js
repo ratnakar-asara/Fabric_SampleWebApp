@@ -37,77 +37,45 @@ var ORGS = hfc.getConfigSetting('network-config');
 var tx_id = null;
 var nonce = null;
 var adminUser = null;
+var eventhubs = [];
 var allEventhubs = [];
-var isSuccess = null;
 
-// on process exit, always disconnect the event hub
-process.on('exit', function() {
-	if (isSuccess){
-		logger.debug('\n============ Invoke transaction is SUCCESS ============\n')
-	}else{
-		logger.debug('\n!!!!!!!! ERROR: Invoke transaction FAILED !!!!!!!!\n')
-	}
-	for(var key in allEventhubs) {
-		var eventhub = allEventhubs[key];
-		if (eventhub && eventhub.isconnected()) {
-			//logger.debug('Disconnecting the event hub');
-			eventhub.disconnect();
+var invokeChaincode = function (orderer, peers, channelName, chaincodeName, chaincodeVersion, functionName, args, username, org){
+	var closeConnections = function(isSuccess) {
+		for(var key in allEventhubs) {
+			var eventhub = allEventhubs[key];
+			if (eventhub && eventhub.isconnected()) {
+				//logger.debug('Disconnecting the event hub');
+				eventhub.disconnect();
+			}
 		}
 	}
-});
 
-	// this is a transaction, will just use org2's identity to
-	// submit the request. intentionally we are using a different org
-	// than the one that instantiated the chaincode, although either org
-	// should work properly
-	var org = config.orgsList[1]; // org2
-	var client = new hfc();
-	var chain = client.newChain(config.channelName);
+			helper.setupChaincodeDeploy();
+			var chain = helper.getChainForOrg(org);
+			helper.setupOrderer(orderer);
+			var targets = helper.getTargets(peers, org);
+			for(var index in targets) {
+				chain.addPeer(targets[index]);
+			}
 
-	chain.addOrderer(
-		helper.getOrderer()
-	);
-
-	var orgName = ORGS[org].name;
-
-	var targets = [], eventhubs = [];
-	// set up the chain to use each org's 'peer1' for
-	// both requests and events
-	for (let key in ORGS) {
-		if (ORGS.hasOwnProperty(key) && typeof ORGS[key].peer1 !== 'undefined') {
-			let data = fs.readFileSync(path.join(__dirname, ORGS[key].peer1['tls_cacerts']));
-			let peer = new Peer(
-				ORGS[key].peer1.requests,
-				{
-					pem: Buffer.from(data).toString(),
-					'ssl-target-name-override': ORGS[key].peer1['server-hostname']
-				}
-			);
-			chain.addPeer(peer);
-
+      //FIXME: chanfe this to read peer dynamically
 			let eh = new EventHub();
+			let data = fs.readFileSync(path.join(__dirname, ORGS[org]['peer1']['tls_cacerts']));
 			eh.setPeerAddr(
-				ORGS[key].peer1.events,
+				ORGS[org]['peer1']['events'],
 				{
 					pem: Buffer.from(data).toString(),
-					'ssl-target-name-override': ORGS[key].peer1['server-hostname']
+					'ssl-target-name-override': ORGS[org]['peer1']['server-hostname']
 				}
 			);
 			eh.connect();
 			eventhubs.push(eh);
 			allEventhubs.push(eh);
-		}
-	}
 
-	return hfc.newDefaultKeyValueStore({
-    path: helper.getKeyStoreForOrg(orgName)
-	}).then((store) => {
-		client.setStateStore(store);
-    return helper.getSubmitter(client, org);
-	}).then((admin) => {
-
-		logger.info('Successfully enrolled user \'admin\'');
-		adminUser = admin;
+	return helper.getAdminUser(org)
+	.then((member) => {
+	  adminUser = member;
 
 		nonce = utils.getNonce();
 		tx_id = chain.buildTransactionID(nonce, adminUser);
@@ -117,11 +85,11 @@ process.on('exit', function() {
 
 		// send proposal to endorser
 		var request = {
-			chaincodeId: config.chaincodeId,
-			chaincodeVersion: config.chaincodeVersion,
-			chainId: config.channelName,
-			fcn: config.invokeRequest.functionName,
-			args: helper.getArgs(config.invokeRequest.args),
+			chaincodeId: chaincodeName,
+			chaincodeVersion: chaincodeVersion,
+			fcn: functionName,
+			args: helper.getArgs(args),
+			chainId: channelName,
 			txId: tx_id,
 			nonce: nonce
 		};
@@ -194,18 +162,18 @@ process.on('exit', function() {
 			}).catch((err) => {
 
 				logger.error('Failed to send transaction and get notifications within the timeout period.');
-				throw new Error('Failed to send transaction and get notifications within the timeout period.');
+				return 'Failed to send transaction and get notifications within the timeout period.';
 
 			});
 
 		} else {
 			logger.error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
-			throw new Error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
+			return 'Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...';
 		}
 	}, (err) => {
 
 		logger.error('Failed to send proposal due to error: ' + err.stack ? err.stack : err);
-		throw new Error('Failed to send proposal due to error: ' + err.stack ? err.stack : err);
+		return 'Failed to send proposal due to error: ' + err.stack ? err.stack : err;
 
 	}).then((response) => {
 
@@ -215,15 +183,15 @@ process.on('exit', function() {
 			logger.debug('To manually run query.js, set the following environment variables:');
 			logger.debug('E2E_TX_ID='+'\''+tx_id+'\'');
 			logger.debug('******************************************************************');
-
-			isSuccess = true;
-			process.exit();
-
+			return 'Invoke is successful';
 		} else {
 			logger.error('Failed to order the transaction. Error code: ' + response.status);
-			throw new Error('Failed to order the transaction. Error code: ' + response.status);
+			return 'Failed to order the transaction. Error code: ' + response.status;
 		}
 	}, (err) => {
 		logger.error('Failed to send transaction due to error: ' + err.stack ? err.stack : err);
-		throw new Error('Failed to send transaction due to error: ' + err.stack ? err.stack : err);
+		return 'Failed to send transaction due to error: ' + err.stack ? err.stack : err;
+
 	});
+}
+exports.invokeChaincode = invokeChaincode;
