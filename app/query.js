@@ -30,82 +30,60 @@ var EventHub = require('fabric-client/lib/EventHub.js');
 var config = require('../config.json')
 var helper = require('./helper.js');
 var logger = helper.getLogger('invoke-chaincode');
-
-hfc.addConfigFile(path.join(__dirname, 'network-config.json'));
-var ORGS = hfc.getConfigSetting('network-config');
-
 var tx_id = null;
 var nonce = null;
 var adminUser = null;
+var queryChaincode = function (peers, channelName, chaincodeName, chaincodeVersion, functionName, args, username, org){
 
-	// this is a transaction, will just use org1's identity to
-	// submit the request. intentionally we are using a different org
-	// than the one that submitted the "move" transaction, although either org
-	// should work properly
-	var org = config.orgsList[0]; // org1
-	var client = new hfc();
-	var chain = client.newChain(config.channelName);
+			helper.setupChaincodeDeploy();
+			var chain = helper.getChainForOrg(org);
+			//helper.setupOrderer(orderer);
+			var targets = helper.getTargets(peers, org);
+			helper.setupPeers(chain, peers, targets);
+			/*for(var index in targets) {
+				chain.addPeer(targets[index]);
+			}*/
 
-	chain.addOrderer(
-		helper.getOrderer()
-	);
-	var orgName = ORGS[org].name;
-
-	var targets = [];
-	// set up the chain to use each org's 'peer1' for
-	// both requests and events
-	for (let key in ORGS) {
-		if (ORGS.hasOwnProperty(key) && typeof ORGS[key].peer1 !== 'undefined') {
-			let data = fs.readFileSync(path.join(__dirname, ORGS[key].peer1['tls_cacerts']));
-			let peer = new Peer(
-				ORGS[key].peer1.requests,
-				{
-					pem: Buffer.from(data).toString(),
-					'ssl-target-name-override': ORGS[key].peer1['server-hostname']
-				});
-			chain.addPeer(peer);
-		}
-	}
-
-	return hfc.newDefaultKeyValueStore({
-    path: helper.getKeyStoreForOrg(orgName)
-	}).then((store) => {
-
-		client.setStateStore(store);
-    return helper.getSubmitter(client, org);
-
-	}).then((admin) => {
-		adminUser = admin;
+	   return helper.getAdminUser(org)
+	.then((member) => {
+	  adminUser = member;
 
 		nonce = utils.getNonce();
 		tx_id = chain.buildTransactionID(nonce, adminUser);
 
 		// send query
 		var request = {
-			chaincodeId: config.chaincodeId,
-			chaincodeVersion: config.chaincodeVersion,
-			chainId: config.channelName,
+			targets : targets,
+			chaincodeId: chaincodeName,
+			//chaincodeVersion: chaincodeVersion,
+			chainId: channelName,
 			txId: tx_id,
 			nonce: nonce,
-			fcn: config.queryRequest.functionName,
-			args: helper.getArgs(config.queryRequest.args)
+			fcn: functionName,
+			args: helper.getArgs(args)
 		};
 		return chain.queryByChaincode(request);
 	},
 	(err) => {
 		logger.info('Failed to get submitter \'admin\'');
-		logger.error('Failed to get submitter \'admin\'. Error: ' + err.stack ? err.stack : err );
+		return 'Failed to get submitter \'admin\'. Error: ' + err.stack ? err.stack : err ;
 	}).then((response_payloads) => {
 		if (response_payloads) {
 			for(let i = 0; i < response_payloads.length; i++) {
 				logger.info('User b now has '+response_payloads[i].toString('utf8')+' after the move')
+				return 'User b now has '+response_payloads[i].toString('utf8')+' after the move';
 			}
 		} else {
 			logger.error('response_payloads is null');
+			return 'response_payloads is null';
 		}
 	},
 	(err) => {
 		logger.error('Failed to send query due to error: ' + err.stack ? err.stack : err);
+		return 'Failed to send query due to error: ' + err.stack ? err.stack : err;
 	}).catch((err) => {
 		logger.error('Failed to end to end test with error:' + err.stack ? err.stack : err);
+		return 'Failed to end to end test with error:' + err.stack ? err.stack : err;
 	});
+}
+exports.queryChaincode = queryChaincode;

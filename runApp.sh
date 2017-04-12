@@ -44,27 +44,9 @@ function installNodeModules() {
 	echo
 }
 
-function execApp(){
-	echo "============== Start node app execution =============="
-	echo ""
-	node app/create-channel.js
-
-	node app/join-channel.js
-
-	node app/install-chaincode.js
-
-	node app/instantiate-chaincode.js
-
-	node app/invoke-transaction.js
-
-	node app/query.js
-	echo ""
-	echo "============== App execution completed ============="
-	echo
-}
 
 restartNetwork
 
-#installNodeModules
+installNodeModules
 
-#execApp
+PORT=4000 node app

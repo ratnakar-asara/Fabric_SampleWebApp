@@ -83,6 +83,39 @@ chains.forEach(function(chain){
 	}
 });
 }
+var getTarget = function(targets, peer){
+	for (let key in targets){
+		if (targets[key]._endpoint.addr === peer) {
+			return targets[key];
+		}
+	}
+}
+
+var setupPeers = function(chain, peers, targets ) {
+	//chains.forEach(function(chain){
+	if (chain.getPeers().length === 0) {
+		for (let index in targets) {
+			chain.addPeer(targets[index])
+		}
+	} else {
+		var peersList = chain.getPeers();
+		for (let index in peers) {
+			let found = false;
+			for (let key in peersList){
+				console.log('peersList[key]._endpoint.addr : '+peersList[key]._endpoint.addr)
+				console.log('peers['+index+'] : '+peers[index]);
+				if (peersList[key]._endpoint.addr === peers[index]) {
+					found = true;
+				}
+			}
+			if (!found){
+				let target = getTarget(targets, peers[index])
+				chain.addPeer(target);
+			}
+		}
+	}
+//});
+}
 
 var getChainForOrg = function(orgName) {
 	if (orgName ===  config.orgsList[0]) {
@@ -102,7 +135,6 @@ var clientForOrg = function(orgName) {
 
 var getTargets = function(peers, org) {
 	var targets = [];
-	print(peers);
 	for (let index in peers) {
 		for (let key in ORGS[org]) {
 			if (ORGS[org].hasOwnProperty(key)) {
@@ -280,3 +312,4 @@ exports.setupOrderer = setupOrderer;
 exports.getTargets = getTargets;
 exports.getChainForOrg = getChainForOrg;
 exports.clientForOrg = clientForOrg;
+exports.setupPeers = setupPeers;

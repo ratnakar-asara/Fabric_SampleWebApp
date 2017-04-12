@@ -55,9 +55,10 @@ var invokeChaincode = function (orderer, peers, channelName, chaincodeName, chai
 			var chain = helper.getChainForOrg(org);
 			helper.setupOrderer(orderer);
 			var targets = helper.getTargets(peers, org);
-			for(var index in targets) {
+			helper.setupPeers(chain, peers, targets);
+			/*for(var index in targets) {
 				chain.addPeer(targets[index]);
-			}
+			}*/
 
       //FIXME: chanfe this to read peer dynamically
 			let eh = new EventHub();
@@ -85,6 +86,7 @@ var invokeChaincode = function (orderer, peers, channelName, chaincodeName, chai
 
 		// send proposal to endorser
 		var request = {
+			targets: targets,
 			chaincodeId: chaincodeName,
 			chaincodeVersion: chaincodeVersion,
 			fcn: functionName,

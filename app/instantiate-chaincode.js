@@ -59,9 +59,10 @@ var instantiateChaincode = function (orderer, peers, channelName, chaincodeName,
 			var chain = helper.getChainForOrg(org);
 			helper.setupOrderer(orderer);
 			var targets = helper.getTargets(peers, org);
-			for(var index in targets) {
+			helper.setupPeers(chain, peers, targets);
+			/*for(var index in targets) {
 				chain.addPeer(targets[index]);
-			}
+			}*/
 
       //FIXME: chanfe this to read peer dynamically
 			let eh = new EventHub();

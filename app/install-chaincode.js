@@ -40,9 +40,12 @@ var installChaincode = function (orderer, peers, chaincodeName, chaincodePath, c
 		var chain = helper.getChainForOrg(org);
 		helper.setupOrderer(orderer);
 		var targets = helper.getTargets(peers, org);
-		for(var index in targets) {
+    helper.setupPeers(chain, peers, targets);
+		/*for(var index in targets) {
 			chain.addPeer(targets[index]);
 		}
+
+    logger.info(chain.getPeers());*/
 
 		return helper.getAdminUser(org)
 		.then((member) => {
