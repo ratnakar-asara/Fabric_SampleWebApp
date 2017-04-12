@@ -21,7 +21,7 @@ info: **************  http://loclahost:4000  ******************
 
 ### How to execute the requests
 
-##### using PostMan
+#### using PostMan
 
 Imort the following link in your PostMan 
 https://www.getpostman.com/collections/c67f15e1e9da14b31ffd
@@ -29,13 +29,13 @@ https://www.getpostman.com/collections/c67f15e1e9da14b31ffd
 	
 -------------------------- OR -------------------------- 
 
-##### using cURL
+#### using cURL
 
-#### 1. Enroll Users:
+##### 1. Enroll Users:
 
 `curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 83d68175-4d03-0eb5-17bb-37d39ef54dd0" -d '{"username" : "binh", "orgName": "org2"}' "http://localhost:4000/users"`
 
-#### 2. Create Channel
+##### 2. Create Channel
 
 `curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 84a0c4bf-f902-b24e-8bda-38dda0bc4dae" -d '{
 	"channelName":"mychannel",
@@ -45,7 +45,7 @@ https://www.getpostman.com/collections/c67f15e1e9da14b31ffd
     "orgName": "org1"
 }' "http://localhost:4000/channels"`
 
-#### 3. Join Channel
+##### 3. Join Channel
 
 *Org1*
 
@@ -67,7 +67,7 @@ https://www.getpostman.com/collections/c67f15e1e9da14b31ffd
 }' "http://localhost:4000/channels/mychannel/peers"
 `
 
-#### 4. install chaincode
+##### 4. install chaincode
 
 *Org1*
 
@@ -93,7 +93,7 @@ https://www.getpostman.com/collections/c67f15e1e9da14b31ffd
     "orgName": "org2"
 }' "http://localhost:4000/chaincodes"`
 
-#### 5. Instantiate chaincode
+##### 5. Instantiate chaincode
 Instantiate chaincode on peer1 of Org1
 
 `curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 40dce817-c5fb-7288-4620-9a667ed29831" -d '{
@@ -108,7 +108,7 @@ Instantiate chaincode on peer1 of Org1
     "orgName": "org1"
 }' "http://localhost:4000/channels/mychannel/chaincodes"`
 
-#### 6. Invoke chaincode
+##### 6. Invoke chaincode
 
 Invoke on chaincode on peer1 of Org1
 
@@ -123,8 +123,19 @@ Invoke on chaincode on peer1 of Org1
 }' "http://localhost:4000/channels/mychannel/chaincodes/mycc"`
 
 
-#### 7. Query chaincode
+##### 7. Query chaincode
 
 Query on chaincode on peer1 of Org1
 
-`curl -X GET -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 19ae0253-a923-9657-ad05-26f1be6f8d0c" "http://localhost:4000/channels/mychannel/chaincodes/mycc?args=[%22query%22%2C%22a%22]"`
+`curl -gs http://localhost:4000/channels/mychannel/chaincodes/mycc?args=[\"query\",\"b\"]&chaincodeVersion=v0`
+
+
+-------------------------- OR -------------------------- 
+
+#### script
+
+Run the script **testAPIs.sh** after starting the network and app
+
+```
+./testAPIs.sh
+```

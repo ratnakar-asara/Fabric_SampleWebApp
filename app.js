@@ -158,22 +158,11 @@ app.post('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) 
 		logger.debug('chaincodeName : ' +req.params.chaincodeName);
 
 		logger.debug('Args : ' +req.body.args);
-		//logger.debug('chaincodeVersion  : ' +req.body.chaincodeVersion);
+		logger.debug('chaincodeVersion  : ' +req.body.chaincodeVersion);
 		logger.debug('User name : ' +req.body.username);
 		logger.debug('Org name  : ' +req.body.orgName);
 		//res.send('received your request . will process it soon');
-		let promise = null;
-		let functionName = config.invokeQueryFcnName;
-
-		promise = invoke.invokeChaincode(req.body.orderer, req.body.peers, req.params.channelName, req.params.chaincodeName, req.body.chaincodeVersion, functionName, req.body.args, req.body.username, req.body.orgName);
-		/*if (req.query.functionName == undefined || req.query.functionName == ""){
-			logger.debug('functionName : ' +req.body.functionName);
-			promise = invoke.invokeChaincode(req.body.orderer, req.body.peers, req.params.channelName, req.params.chaincodeName, req.body.chaincodeVersion, req.body.functionName, req.body.args, req.body.username, req.body.orgName);
-		} else {
-			logger.debug('functionName : ' +req.query.functionName);
-      promise = query.queryChaincode(req.body.peers, req.params.channelName, req.params.chaincodeName, req.body.chaincodeVersion, req.query.functionName, req.body.args, req.body.username, req.body.orgName);
-		}*/
-
+		let promise = invoke.invokeChaincode(req.body.orderer, req.body.peers, req.params.channelName, req.params.chaincodeName, req.body.chaincodeVersion, req.body.args, req.body.username, req.body.orgName);
 		promise.then(function (message){
 			res.send(message);
 	  });
@@ -189,10 +178,8 @@ app.get('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) {
 		logger.debug('chaincodeName : ' +req.params.chaincodeName);
 		//logger.debug('chaincodeVersion  : ' +req.body.chaincodeVersion);
 
-		let functionName = config.invokeQueryFcnName;
 		//FIXME: HOW DO WE GET THESE DETAILS in GET ?
 		let peers = ['localhost:7051'];
-		let chaincodeVersion = 'v0';
 		let username = 'binh';
 		let orgName = 'org1'
 
@@ -200,7 +187,8 @@ app.get('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) {
 		console.log(args);
 		args = args.replace(/'/g, '"');
 		args = JSON.parse(args);
-    var promise = query.queryChaincode(peers, req.params.channelName, req.params.chaincodeName, chaincodeVersion, functionName, args, username, orgName);
+		let version = req.query.chaincodeVersion;
+    var promise = query.queryChaincode(peers, req.params.channelName, req.params.chaincodeName, version, args, username, orgName);
 		promise.then(function (message){
 			res.send(message);
 	  });

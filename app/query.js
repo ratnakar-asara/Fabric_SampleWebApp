@@ -33,7 +33,7 @@ var logger = helper.getLogger('invoke-chaincode');
 var tx_id = null;
 var nonce = null;
 var adminUser = null;
-var queryChaincode = function (peers, channelName, chaincodeName, chaincodeVersion, functionName, args, username, org){
+var queryChaincode = function (peers, channelName, chaincodeName, chaincodeVersion, args, username, org){
 
 			helper.setupChaincodeDeploy();
 			var chain = helper.getChainForOrg(org);
@@ -55,11 +55,11 @@ var queryChaincode = function (peers, channelName, chaincodeName, chaincodeVersi
 		var request = {
 			targets : targets,
 			chaincodeId: chaincodeName,
-			//chaincodeVersion: chaincodeVersion,
+			chaincodeVersion: chaincodeVersion,
 			chainId: channelName,
 			txId: tx_id,
 			nonce: nonce,
-			fcn: functionName,
+			fcn: config.functionName,
 			args: helper.getArgs(args)
 		};
 		return chain.queryByChaincode(request);
