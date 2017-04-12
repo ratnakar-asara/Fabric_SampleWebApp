@@ -84,11 +84,10 @@ app.post('/users', function(req, res) {
 app.post('/channels', function(req, res) {
 	  logger.debug('End point : /channels');
 		logger.debug('Channel name : ' +req.body.channelName);
-		logger.debug('orderer : '+req.body.orderer); // grpcs://localhost:7050,
 		logger.debug('channelConfigPath : '+req.body.channelConfigPath);//../artifacts/channel/mychannel.tx
 		logger.debug('User name : ' +req.body.username);
 		logger.debug('Org name  : ' +req.body.orgName);
-    var promise = channels.createChannel(req.body.channelName, req.body.orderer, req.body.channelConfigPath, req.body.username, req.body.orgName);
+    var promise = channels.createChannel(req.body.channelName, req.body.channelConfigPath, req.body.username, req.body.orgName);
 		promise.then(function (message){
 			res.send(message);
 	  });
@@ -99,12 +98,11 @@ app.post('/channels', function(req, res) {
 */
 app.post('/channels/:channelName/peers', function(req, res) {
 	  logger.debug('End point : /channels/'+req.params.channelName+'/peers');
-		logger.debug('orderer : '+req.body.orderer); // grpcs://localhost:7050,
 		logger.debug('peers : '+req.body.peers);// target peers list
 		logger.debug('User name : ' +req.body.username);
 		logger.debug('Org name  : ' +req.body.orgName);
 		//res.send('received your request . will process it soon');
-    var promise = join.joinChannel(req.params.channelName, req.body.orderer, req.body.peers, req.body.username, req.body.orgName);
+    var promise = join.joinChannel(req.params.channelName, req.body.peers, req.body.username, req.body.orgName);
 		promise.then(function (message){
 			res.send(message);
 	  });
@@ -124,7 +122,7 @@ app.post('/chaincodes', function(req, res) {
 		logger.debug('User name : ' +req.body.username);
 		logger.debug('Org name  : ' +req.body.orgName);
 		//res.send('received your request . will process it soon');
-    var promise = install.installChaincode(req.body.orderer, req.body.peers, req.body.chaincodeName, req.body.chaincodePath, req.body.chaincodeVersion, req.body.username, req.body.orgName);
+    var promise = install.installChaincode(req.body.peers, req.body.chaincodeName, req.body.chaincodePath, req.body.chaincodeVersion, req.body.username, req.body.orgName);
 		promise.then(function (message){
 			res.send(message);
 	  });
@@ -143,7 +141,7 @@ app.post('/channels/:channelName/chaincodes', function(req, res) {
 		logger.debug('User name : ' +req.body.username);
 		logger.debug('Org name  : ' +req.body.orgName);
 		//res.send('received your request . will process it soon');
-    var promise = instantiate.instantiateChaincode(req.body.orderer, req.body.peers, req.params.channelName, req.body.chaincodeName, req.body.chaincodePath, req.body.chaincodeVersion, req.body.functionName, req.body.args, req.body.username, req.body.orgName);
+    var promise = instantiate.instantiateChaincode(req.body.peers, req.params.channelName, req.body.chaincodeName, req.body.chaincodePath, req.body.chaincodeVersion, req.body.functionName, req.body.args, req.body.username, req.body.orgName);
 		promise.then(function (message){
 			res.send(message);
 	  });
@@ -162,7 +160,7 @@ app.post('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) 
 		logger.debug('User name : ' +req.body.username);
 		logger.debug('Org name  : ' +req.body.orgName);
 		//res.send('received your request . will process it soon');
-		let promise = invoke.invokeChaincode(req.body.orderer, req.body.peers, req.params.channelName, req.params.chaincodeName, req.body.chaincodeVersion, req.body.args, req.body.username, req.body.orgName);
+		let promise = invoke.invokeChaincode(req.body.peers, req.params.channelName, req.params.chaincodeName, req.body.chaincodeVersion, req.body.args, req.body.username, req.body.orgName);
 		promise.then(function (message){
 			res.send(message);
 	  });

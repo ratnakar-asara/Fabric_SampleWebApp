@@ -10,6 +10,7 @@
    "orgsList": ["org1","org2"],
    "eventWaitTime":"30000",
    "invokeQueryFcnName":"invoke",
+   "orderer":"grpcs://localhost:7050",
    "users":[
       {
          "username":"admin",

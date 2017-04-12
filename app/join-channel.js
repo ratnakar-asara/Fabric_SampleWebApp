@@ -41,7 +41,7 @@ var _commonProto = grpc.load(path.join(__dirname, '../node_modules/fabric-client
 //Attempt to send a request to the orderer with the sendCreateChain method
 //
 
-var joinChannel = function (channelName, orderer, peers, username, org){
+var joinChannel = function (channelName, peers, username, org){
 
 		// on process exit, always disconnect the event hub
 		var closeConnections = function(isSuccess) {
@@ -63,7 +63,7 @@ var joinChannel = function (channelName, orderer, peers, username, org){
 		//logger.debug('\n============ Join Channel ============\n')
 	logger.info(util.format('Calling peers in organization "%s" to join the channel', org));
 
-	helper.setupOrderer(orderer);
+	helper.setupOrderer();
   var chain = helper.getChainForOrg(org);
 	var targets = helper.getTargets(peers, org);
 	var eventhubs = [];

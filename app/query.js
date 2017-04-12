@@ -37,12 +37,8 @@ var queryChaincode = function (peers, channelName, chaincodeName, chaincodeVersi
 
 			helper.setupChaincodeDeploy();
 			var chain = helper.getChainForOrg(org);
-			//helper.setupOrderer(orderer);
 			var targets = helper.getTargets(peers, org);
 			helper.setupPeers(chain, peers, targets);
-			/*for(var index in targets) {
-				chain.addPeer(targets[index]);
-			}*/
 
 	   return helper.getAdminUser(org)
 	.then((member) => {

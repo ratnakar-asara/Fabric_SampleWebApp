@@ -59,26 +59,26 @@ var print = function(message) {
 exports.print = print;
 /****************************************************************************/
 
-var addOrderer = function (chain, orderer){
-	chain.addOrderer(
-		getOrderer('grpcs://' + orderer)
-	);
-}
-var setupOrderer = function(orderer) {
+var setupOrderer = function() {
 	let chains = [chain1, chain2];
 chains.forEach(function(chain){
 	if (chain.getOrderers().length === 0) {
-		addOrderer(chain, orderer);
+		chain.addOrderer(
+			getOrderer()
+		);
 	} else {
 		var ordererList = chain.getOrderers();
 		let found = false;
 		for (let key in ordererList){
-			if (ordererList[key]._endpoint.addr === orderer) {
+			//console.log(ordererList[key]);
+			if (ordererList[key]._url === config.orderer) {
 				found = true;
 			}
 		}
 		if (!found){
-			addOrderer(orderer);
+			chain.addOrderer(
+				getOrderer()
+			);
 		}
 	}
 });
@@ -273,12 +273,12 @@ var getOrgName = function(org) {
 	return ORGS[org].name;
 }
 
-var getOrderer = function(orderer) {
+var getOrderer = function() {
 	var caRootsPath = ORGS.orderer.tls_cacerts;
 	let data = fs.readFileSync(path.join(__dirname, caRootsPath));
 	let caroots = Buffer.from(data).toString();
 	return new Orderer(
-		orderer, {
+		config.orderer, {
 			'pem': caroots,
 			'ssl-target-name-override': ORGS.orderer['server-hostname']
 		}

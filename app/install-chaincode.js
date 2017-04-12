@@ -34,11 +34,11 @@ var nonce = null;
 var adminUser = null;
 
 //function installChaincode(org) {
-var installChaincode = function (orderer, peers, chaincodeName, chaincodePath, chaincodeVersion, username, org){
+var installChaincode = function (peers, chaincodeName, chaincodePath, chaincodeVersion, username, org){
     logger.debug('\n============ Install chaincode on organizations ============\n')
 		helper.setupChaincodeDeploy();
 		var chain = helper.getChainForOrg(org);
-		helper.setupOrderer(orderer);
+		helper.setupOrderer();
 		var targets = helper.getTargets(peers, org);
     helper.setupPeers(chain, peers, targets);
 		/*for(var index in targets) {

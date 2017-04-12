@@ -41,7 +41,7 @@ var eventhubs = [];
 var allEventhubs = [];
 var isSuccess = null;
 
-var instantiateChaincode = function (orderer, peers, channelName, chaincodeName, chaincodePath, chaincodeVersion, functionName, args, username, org){
+var instantiateChaincode = function (peers, channelName, chaincodeName, chaincodePath, chaincodeVersion, functionName, args, username, org){
 
 	var closeConnections = function(isSuccess) {
 		for(var key in allEventhubs) {
@@ -57,7 +57,7 @@ var instantiateChaincode = function (orderer, peers, channelName, chaincodeName,
 	    logger.debug('\n============ Install chaincode on organizations ============\n')
 			helper.setupChaincodeDeploy();
 			var chain = helper.getChainForOrg(org);
-			helper.setupOrderer(orderer);
+			helper.setupOrderer();
 			var targets = helper.getTargets(peers, org);
 			helper.setupPeers(chain, peers, targets);
 

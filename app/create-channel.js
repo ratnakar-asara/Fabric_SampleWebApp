@@ -26,10 +26,10 @@ var logger = helper.getLogger('Create-Channel');
 //TODO:
 // 1. Should we download channelConfig trxn file and read the file ?
 // 2. Better way to format the error messages
-var createChannel = function (channelName, orderer, channelConfigPath, username, orgName){
+var createChannel = function (channelName, channelConfigPath, username, orgName){
   logger.debug('\n====== Creating Channel \''+channelName+'\' ======\n')
 
-	helper.setupOrderer(orderer);
+	helper.setupOrderer();
   var chain = helper.getChainForOrg(orgName);
 	// Acting as a client in org1 when creating the channel
   return helper.getAdminUser(orgName)
