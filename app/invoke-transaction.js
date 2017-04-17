@@ -185,7 +185,7 @@ var invokeChaincode = function (peers, channelName, chaincodeName, chaincodeVers
 			logger.debug('To manually run query.js, set the following environment variables:');
 			logger.debug('E2E_TX_ID='+'\''+tx_id+'\'');
 			logger.debug('******************************************************************');
-			return 'Invoke is successful';
+			return tx_id;
 		} else {
 			logger.error('Failed to order the transaction. Error code: ' + response.status);
 			return 'Failed to order the transaction. Error code: ' + response.status;

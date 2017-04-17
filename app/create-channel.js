@@ -24,8 +24,7 @@ var logger = helper.getLogger('Create-Channel');
 
 //Attempt to send a request to the orderer with the sendCreateChain method
 //TODO:
-// 1. Should we download channelConfig trxn file and read the file ?
-// 2. Better way to format the error messages
+// 1. Better way to format the error messages
 var createChannel = function (channelName, channelConfigPath, username, orgName){
   logger.debug('\n====== Creating Channel \''+channelName+'\' ======\n')
 

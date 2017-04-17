@@ -1,6 +1,21 @@
-//TODO: Copy right header?
-// SCC queries implementation
-// User login (register / enroll) --- login/logout
+/**
+ * Copyright 2017 IBM All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the 'License');
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an 'AS IS' BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+//TODO:
+// User login (register / enroll) --- login
 // Code cleanup
 
 var express = require('express');
@@ -228,15 +243,15 @@ app.post('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) 
   Query on chaincode on target peers
 */
 //FIXME: Should we take list of peers names as we save the urls of the peers in config ?
-// 2. Should we need to token stuff here ?
+// 1. Should we need to token stuff here ?
 app.get('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) {
-    logger.debug('End point : /channels');
+    logger.debug('==================== QUERY ON CHAINCODE ==================');
     //logger.debug('peers : '+req.body.peers);// target peers list
     logger.debug('channelName : ' + req.params.channelName);
     logger.debug('chaincodeName : ' + req.params.chaincodeName);
     //logger.debug('chaincodeVersion  : ' +req.body.chaincodeVersion);
     //FIXME: HOW DO WE GET THESE DETAILS in GET ?
-    let peers = ['localhost:7051'];
+    let peer = req.query.peer;
     let args = req.query.args;
     console.log(args);
     args = args.replace(/'/g, '"');
@@ -254,7 +269,166 @@ app.get('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) {
 						//res.send(d);
 						logger.debug('User name : ' + decoded.username);
 						logger.debug('Org name  : ' + decoded.orgName);
-						var promise = query.queryChaincode(peers, req.params.channelName, req.params.chaincodeName, version, args, decoded.username, decoded.orgName);
+						var promise = query.queryChaincode(peer, req.params.channelName, req.params.chaincodeName, version, args, decoded.username, decoded.orgName);
+						promise.then(function(message) {
+								res.send(message);
+						});
+				}
+		});
+});
+
+//getBlockByNumber
+app.get('/channels/:channelName/blocks/:blockId', function(req, res) {
+    logger.debug('==================== GET BLOCK BY NUMBER ==================');
+    //logger.debug('peers : '+req.body.peers);// target peers list
+    let blockId = req.params.blockId;
+		let peer = req.query.participatingPeer;
+		logger.debug('channelName : ' + req.params.channelName);
+		logger.debug('BlockID : ' + blockId);
+		logger.debug('PEER : ' + peer);
+		var token = req.body.token || req.query.token || req.headers['x-access-token'];
+		jwt.verify(token, app.get('secret'), function(err, decoded) {
+				if (err) {
+						res.send({
+								success: false,
+								message: 'Failed to authenticate token.'
+						});
+				} else {
+						logger.debug('User name : ' + decoded.username);
+						logger.debug('Org name  : ' + decoded.orgName);
+						var promise = query.getBlockByNumber(peer, blockId, decoded.username, decoded.orgName);
+						promise.then(function(message) {
+								res.send(message);
+						});
+				}
+		});
+});
+
+
+//GetTransactionByID
+app.get('/channels/:channelName/transactions/:trxnId', function(req, res) {
+    logger.debug('================ GET TRANSACTION BY TRANSACTION_ID ======================');
+    //logger.debug('peers : '+req.body.peers);// target peers list
+    logger.debug('channelName : ' + req.params.channelName);
+    let trxnId = req.params.trxnId;
+		let peer = req.query.participatingPeer;
+		var token = req.body.token || req.query.token || req.headers['x-access-token'];
+		jwt.verify(token, app.get('secret'), function(err, decoded) {
+				if (err) {
+						res.send({
+								success: false,
+								message: 'Failed to authenticate token.'
+						});
+				} else {
+						logger.debug('User name : ' + decoded.username);
+						logger.debug('Org name  : ' + decoded.orgName);
+						var promise = query.getTransactionByID(peer, trxnId, decoded.username, decoded.orgName);
+						promise.then(function(message) {
+								res.send(message);
+						});
+				}
+		});
+});
+
+//TODO: What hash value to be passed here ?
+//GetBlockByHash
+app.get('/channels/:channelName/blocks', function(req, res) {
+    logger.debug('================ GET BLOCK BY HASH ======================');
+    //logger.debug('peers : '+req.body.peers);// target peers list
+    logger.debug('channelName : ' + req.params.channelName);
+    let hash = req.query.hash;
+		let peer = req.query.participatingPeer;
+		var token = req.body.token || req.query.token || req.headers['x-access-token'];
+		jwt.verify(token, app.get('secret'), function(err, decoded) {
+				if (err) {
+						res.send({
+								success: false,
+								message: 'Failed to authenticate token.'
+						});
+				} else {
+						logger.debug('User name : ' + decoded.username);
+						logger.debug('Org name  : ' + decoded.orgName);
+						var promise = query.getBlockByHash(peer, hash, decoded.username, decoded.orgName);
+						promise.then(function(message) {
+								res.send(message);
+						});
+				}
+		});
+});
+
+//Query for Channel Information
+app.get('/channels/:channelName', function(req, res) {
+    logger.debug('================ GET CHANNEL INFORMATION ======================');
+    //logger.debug('peers : '+req.body.peers);// target peers list
+    logger.debug('channelName : ' + req.params.channelName);
+		let peer = req.query.participatingPeer;
+		var token = req.body.token || req.query.token || req.headers['x-access-token'];
+		jwt.verify(token, app.get('secret'), function(err, decoded) {
+				if (err) {
+						res.send({
+								success: false,
+								message: 'Failed to authenticate token.'
+						});
+				} else {
+						logger.debug('User name : ' + decoded.username);
+						logger.debug('Org name  : ' + decoded.orgName);
+						var promise = query.getChainInfo(peer, decoded.username, decoded.orgName);
+						promise.then(function(message) {
+								res.send(message);
+						});
+				}
+		});
+});
+
+// Query to fetch all Installed/instantiated chaincodes
+app.get('/chaincodes', function(req, res) {
+
+		var hostingPeer = req.query.hostingPeer;
+		var isInstalled = req.query.installed;
+		if (isInstalled === 'true'){
+			logger.debug('================ GET INSTALLED CHAINCODES ======================');
+		} else {
+			logger.debug('================ GET INSTANTIATED CHAINCODES ======================');
+		}
+
+		//logger.debug('peers : '+req.body.peers);// target peers list
+		logger.debug('hostingPeer: ' + req.query.hostingPeer);
+		var token = req.body.token || req.query.token || req.headers['x-access-token'];
+		jwt.verify(token, app.get('secret'), function(err, decoded) {
+				if (err) {
+						res.send({
+								success: false,
+								message: 'Failed to authenticate token.'
+						});
+				} else {
+						logger.debug('User name : ' + decoded.username);
+						logger.debug('Org name  : ' + decoded.orgName);
+						var promise = query.getInstalledChaincodes(hostingPeer,isInstalled, decoded.username, decoded.orgName);
+						promise.then(function(message) {
+								res.send(message);
+						});
+				}
+		});
+});
+
+// Query to fetch channels
+app.get('/channels', function(req, res) {
+	  logger.debug('================ GET CHANNELS======================');
+    logger.debug('End point : /channels');
+    //logger.debug('peers : '+req.body.peers);// target peers list
+    logger.debug('participatingPeer: ' + req.query.participatingPeer);
+		var participatingPeer = req.query.participatingPeer;
+		var token = req.body.token || req.query.token || req.headers['x-access-token'];
+		jwt.verify(token, app.get('secret'), function(err, decoded) {
+				if (err) {
+						res.send({
+								success: false,
+								message: 'Failed to authenticate token.'
+						});
+				} else {
+						logger.debug('User name : ' + decoded.username);
+						logger.debug('Org name  : ' + decoded.orgName);
+						var promise = query.getChannels(participatingPeer, decoded.username, decoded.orgName);
 						promise.then(function(message) {
 								res.send(message);
 						});
