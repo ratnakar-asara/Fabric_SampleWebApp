@@ -29,105 +29,172 @@ https://www.getpostman.com/collections/c67f15e1e9da14b31ffd
 	
 -------------------------- OR -------------------------- 
 
-#### using cURL
+#### using cURL from command line
 
 ##### 1. Enroll Users:
+*Org1*
 
-`curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 83d68175-4d03-0eb5-17bb-37d39ef54dd0" -d '{"username" : "binh", "orgName": "org2"}' "http://localhost:4000/users"`
+```
+curl -X POST \
+  http://localhost:4000/users \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/x-www-form-urlencoded' \
+  -H 'postman-token: e4509811-2f66-7f57-25e8-d79abf4188b6' \
+  -d 'username=sam&password=secret&orgName=org1'
+```
+
+*Org2*
+
+```
+curl -X POST \
+  http://localhost:4000/users \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/x-www-form-urlencoded' \
+  -H 'postman-token: 56af030e-dae3-b6ff-6960-1b3af85baf7d' \
+  -d 'username=sam&password=secret&orgName=org2'
+```
 
 ##### 2. Create Channel
 
-`curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 84a0c4bf-f902-b24e-8bda-38dda0bc4dae" -d '{
+```
+curl -X POST \
+  http://localhost:4000/channels \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 2f369b2c-b867-2da8-6e9e-fb99698c116f' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -d '{
 	"channelName":"mychannel",
-	"orderer":"localhost:7050",
-	"channelConfigPath":"../artifacts/channel/mychannel.tx",
-	"username" : "binh",
-    "orgName": "org1"
-}' "http://localhost:4000/channels"`
+	"channelConfigPath":"../artifacts/channel/mychannel.tx"
+}'
+```
 
 ##### 3. Join Channel
 
 *Org1*
 
-`curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: bc385c8d-b4e9-ff6d-e1c7-84c7bd31d044" -d '{
-	"orderer":"localhost:7050",
-	"peers": ["localhost:7051","localhost:7056"],
-	"username" : "binh",
-    "orgName": "org1"
-}' "http://localhost:4000/channels/mychannel/peers"
-`
+```
+curl -X POST \
+  http://localhost:4000/channels/mychannel/peers \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 54380c7f-eee9-fc9d-315c-37034ad40113' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -d '{
+	"peers": ["localhost:7051","localhost:7056"]
+}'
+```
 
 *Org2*
 
-`curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: bb8374ff-a2cc-afad-de73-a842139c1faa" -d '{
-	"orderer":"localhost:7050",
-	"peers": ["localhost:8051","localhost:8056"],
-	"username" : "binh",
-    "orgName": "org2"
-}' "http://localhost:4000/channels/mychannel/peers"
-`
+```
+curl -X POST \
+  http://localhost:4000/channels/mychannel/peers \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpbmgiLCJvcmdOYW1lIjoib3JnMiIsImlhdCI6MTQ5MjM5OTcwNH0.iMDVFsE8viKCRwg_VuHuJN5-E1Va6Gem_3pblL1Wb0s' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 99fb6301-0bc3-ac0e-800d-dd89338a8d54' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpbmgiLCJvcmdOYW1lIjoib3JnMiIsImlhdCI6MTQ5MjM5OTcwNH0.iMDVFsE8viKCRwg_VuHuJN5-E1Va6Gem_3pblL1Wb0s' \
+  -d '{
+	"peers": ["localhost:8051","localhost:8056"]
+}'
+```
 
 ##### 4. install chaincode
 
 *Org1*
 
-`curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: d88b4f83-dedb-1262-189e-92b753367f49" -d '{
-	"orderer":"localhost:7050",
+```
+curl -X POST \
+  http://localhost:4000/chaincodes \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 491135ff-82a6-aca6-a0cb-765cabd8e295' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -d '{
 	"peers": ["localhost:7051","localhost:7056"],
 	"chaincodeName":"mycc",
 	"chaincodePath":"github.com/example_cc",
-	"chaincodeVersion":"v0",
-	"username" : "binh",
-    "orgName": "org1"
-}' "http://localhost:4000/chaincodes"`
+	"chaincodeVersion":"v0"
+}'
+```
 
 *Org2*
 
-`curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 48d826f1-831a-1b11-b9ca-15156b470cb0" -d '{
-	"orderer":"localhost:7050",
+```
+curl -X POST \
+  http://localhost:4000/chaincodes \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpbmgiLCJvcmdOYW1lIjoib3JnMiIsImlhdCI6MTQ5MjM5OTcwNH0.iMDVFsE8viKCRwg_VuHuJN5-E1Va6Gem_3pblL1Wb0s' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 41a0b539-8dd2-0587-c800-823a0ce02b28' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpbmgiLCJvcmdOYW1lIjoib3JnMiIsImlhdCI6MTQ5MjM5OTcwNH0.iMDVFsE8viKCRwg_VuHuJN5-E1Va6Gem_3pblL1Wb0s' \
+  -d '{
 	"peers": ["localhost:8051","localhost:8056"],
 	"chaincodeName":"mycc",
 	"chaincodePath":"github.com/example_cc",
-	"chaincodeVersion":"v0",
-	"username" : "binh",
-    "orgName": "org2"
-}' "http://localhost:4000/chaincodes"`
+	"chaincodeVersion":"v0"
+}'
+```
 
 ##### 5. Instantiate chaincode
 Instantiate chaincode on peer1 of Org1
 
-`curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 40dce817-c5fb-7288-4620-9a667ed29831" -d '{
-	"orderer":"localhost:7050",
+```
+curl -X POST \
+  http://localhost:4000/channels/mychannel/chaincodes \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 7ccc33bc-8e92-6c1e-a2d5-51c875d446e7' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -d '{
 	"peers": ["localhost:7051"],
 	"chaincodeName":"mycc",
 	"chaincodePath":"github.com/example_cc",
 	"chaincodeVersion":"v0",
 	"functionName":"init",
-	"args":["a","100","b","200"],
-	"username" : "binh",
-    "orgName": "org1"
-}' "http://localhost:4000/channels/mychannel/chaincodes"`
+	"args":["a","100","b","200"]
+}'
+```
 
 ##### 6. Invoke chaincode
 
 Invoke on chaincode on peer1 of Org1
 
-`curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 40e6e183-3069-337f-7aed-a230373fa84c" -d '{
-	"orderer":"localhost:7050",
+```
+curl -X POST \
+  http://localhost:4000/channels/mychannel/chaincodes/mycc \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 5046837c-e0e5-36e5-60bf-e83f3a48863a' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -d '{
 	"peers": ["localhost:7051"],
 	"chaincodeVersion":"v0",
 	"functionName":"invoke",
-	"args":["move","a","b","10"],
-	"username" : "binh",
-    "orgName": "org1"
-}' "http://localhost:4000/channels/mychannel/chaincodes/mycc"`
+	"args":["move","a","b","10"]
+}'
+```
 
 
 ##### 7. Query chaincode
 
 Query on chaincode on peer1 of Org1
 
-`curl -gs http://localhost:4000/channels/mychannel/chaincodes/mycc?args=[\"query\",\"b\"]&chaincodeVersion=v0`
+```
+curl -X GET \
+  'http://localhost:4000/channels/mychannel/chaincodes/mycc?args=%5B%22query%22%2C%22a%22%5D&chaincodeVersion=v0' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 6c2072c0-6dc3-2ed8-b6a5-29b8ef8269b0' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo'
+```
 
 
 -------------------------- OR -------------------------- 

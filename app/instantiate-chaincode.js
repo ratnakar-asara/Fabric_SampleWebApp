@@ -54,7 +54,7 @@ var instantiateChaincode = function (peers, channelName, chaincodeName, chaincod
 	}
 
 
-	    logger.debug('\n============ Install chaincode on organizations ============\n')
+	    logger.debug('\n============ Instantiate chaincode on organization "'+org+'" ============\n')
 			helper.setupChaincodeDeploy();
 			var chain = helper.getChainForOrg(org);
 			helper.setupOrderer();

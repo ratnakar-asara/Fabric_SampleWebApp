@@ -70,7 +70,6 @@ chains.forEach(function(chain){
 		var ordererList = chain.getOrderers();
 		let found = false;
 		for (let key in ordererList){
-			//console.log(ordererList[key]);
 			if (ordererList[key]._url === config.orderer) {
 				found = true;
 			}
