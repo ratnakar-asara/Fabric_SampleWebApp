@@ -13,9 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-// This is an end-to-end test that focuses on exercising all parts of the fabric APIs
-// in a happy-path scenario
-'use strict';
+
 var path = require('path');
 var fs = require('fs');
 var util = require('util');
@@ -25,10 +23,12 @@ var Peer = require('fabric-client/lib/Peer.js');
 var EventHub = require('fabric-client/lib/EventHub.js');
 var config = require('../config.json');
 var helper = require('./helper.js');
+
 var logger = helper.getLogger('Query');
 var tx_id = null;
 var nonce = null;
 var adminUser = null;
+
 var queryChaincode = function(peer, channelName, chaincodeName, chaincodeVersion, args, username, org) {
 	  var peers = []
 	  peers.push(helper.getPeerAddressByName(org, peer));
@@ -141,7 +141,7 @@ var getBlockByHash = function(peer, hash, username, org) {
     return helper.getAdminUser(org).then((member) => {
         adminUser = member;
 				//TODO: should we set any primary peer ?
-				//chain.setPrimaryPeer(peer0);
+				//chain.setPrimaryPeer(targets[0]);
         return chain.queryBlockByHash(Buffer.from(hash));
     }, (err) => {
         logger.info('Failed to get submitter "' + username + '"');
@@ -172,14 +172,17 @@ var getChainInfo = function(peer, username, org) {
     return helper.getAdminUser(org).then((member) => {
         adminUser = member;
 				//TODO: should we set any primary peer ?
-				//chain.setPrimaryPeer(peer0);
+				//chain.setPrimaryPeer(targets[0]);
         return chain.queryInfo();
     }, (err) => {
         logger.info('Failed to get submitter "' + username + '"');
         return 'Failed to get submitter "' + username + '". Error: ' + err.stack ? err.stack : err;
     }).then((blockchainInfo) => {
         if (blockchainInfo) {
-						logger.debug(blockchainInfo.currentBlockHash.toString()); // TODO: Is this the hash datam, that would be used in 'getBlockByHash'  ??
+					  // TODO: Should we save this for testing 'getBlockByHash'  ?
+						logger.debug('===========================================');
+						logger.debug(blockchainInfo.currentBlockHash);
+						logger.debug('===========================================');
 						//logger.debug(blockchainInfo);
 						return blockchainInfo;
         } else {
@@ -203,9 +206,10 @@ var getInstalledChaincodes = function(hostingPeer, installed, username, org) {
     var targets = helper.getTargets(peers, org);
     helper.setupPeers(chain, peers, targets);
     return helper.getAdminUser(org).then((member) => {
+			peers.push(helper.getPeerAddressByName(org, hostingPeer));
         adminUser = member;
 				//TODO: should we set any primary peer ?
-				//chain.setPrimaryPeer(peer0);
+				//chain.setPrimaryPeer(targets[0]);
 				if (installed === 'true') {
 					return chain.queryInstalledChaincodes(targets[0]);
 				} else {
@@ -253,7 +257,7 @@ var getChannels = function(participatingPeer, username, org) {
     return helper.getAdminUser(org).then((member) => {
         adminUser = member;
 				//TODO: should we set any primary peer ?
-				//chain.setPrimaryPeer(peer0);
+				//chain.setPrimaryPeer(targets[0]);
         return chain.queryChannels(targets[0]);
     }, (err) => {
         logger.info('Failed to get submitter "' + username + '"');

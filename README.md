@@ -176,7 +176,7 @@ curl -X POST \
 }'
 ```
 
-**NOTE**: Save the output of this commands , It is TransactionID can be used while fetching transactions by ID
+**NOTE**: Save the output (TransactionID) of this command, The same can be used when querying transactions by ID
 
 ##### 7. Query chaincode
 
@@ -281,4 +281,4 @@ Run the script **testAPIs.sh** after starting the network and app
 ```
 ./testAPIs.sh
 ```
-**NOTE**: Script fails at the API queryBlockByHash
+**NOTE**: Script fails at queryBlockByHash

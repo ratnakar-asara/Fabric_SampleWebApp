@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 'use strict';
 var log4js = require('log4js');
 var logger = log4js.getLogger('Helper');
@@ -41,7 +42,7 @@ exports.chain2 = chain2;
 // need to enroll it with CA server
 var caClient;
 /****************************************************************************/
-//TODO: Remove this before comitting the code
+// Remove this before comitting the code
 var print = function(message) {
     logger.debug('=============================================================');
     logger.debug(message);
