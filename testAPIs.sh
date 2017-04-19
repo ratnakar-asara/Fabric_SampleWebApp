@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 starttime=$(date +%s)
 
@@ -8,28 +8,26 @@ curl -X POST \
   http://localhost:4000/users \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/x-www-form-urlencoded' \
-  -d 'username=sam&password=secret&orgName=org1'
+  -d 'username=user1&password=secret&orgName=org1'
 echo
 echo
-
-echo 'POST Enroll on Org1 request ...'
+echo 'POST Enroll on Org2 request ...'
 echo
 curl -X POST \
   http://localhost:4000/users \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/x-www-form-urlencoded' \
-  -d 'username=sam&password=secret&orgName=org2'
+  -d 'username=user2&password=secret&orgName=org2'
 echo
 echo
-
 echo 'POST Create channel request ...'
 echo
 curl -X POST \
   http://localhost:4000/channels \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -d '{
 	"channelName":"mychannel",
 	"channelConfigPath":"../artifacts/channel/mychannel.tx"
@@ -37,15 +35,14 @@ curl -X POST \
 echo
 echo
 
-
 echo 'POST Join channel request ... on Org1'
 echo
 curl -X POST \
   http://localhost:4000/channels/mychannel/peers \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -d '{
 	"peers": ["localhost:7051","localhost:7056"]
 }'
@@ -57,10 +54,10 @@ echo 'POST Join channel request ... on Org2'
 echo
 curl -X POST \
   http://localhost:4000/channels/mychannel/peers \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpbmgiLCJvcmdOYW1lIjoib3JnMiIsImlhdCI6MTQ5MjM5OTcwNH0.iMDVFsE8viKCRwg_VuHuJN5-E1Va6Gem_3pblL1Wb0s' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwib3JnTmFtZSI6Im9yZzIiLCJpYXQiOjE0OTI1NzM5MDZ9.yovKRJlkdf-fsdy72enh9wWiqsd0uSRQWNQ6VKdCaL0' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpbmgiLCJvcmdOYW1lIjoib3JnMiIsImlhdCI6MTQ5MjM5OTcwNH0.iMDVFsE8viKCRwg_VuHuJN5-E1Va6Gem_3pblL1Wb0s' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwib3JnTmFtZSI6Im9yZzIiLCJpYXQiOjE0OTI1NzM5MDZ9.yovKRJlkdf-fsdy72enh9wWiqsd0uSRQWNQ6VKdCaL0' \
   -d '{
 	"peers": ["localhost:8051","localhost:8056"]
 }'
@@ -72,10 +69,10 @@ echo 'POST Install chaincode on Org1'
 echo
 curl -X POST \
   http://localhost:4000/chaincodes \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -d '{
 	"peers": ["localhost:7051","localhost:7056"],
 	"chaincodeName":"mycc",
@@ -90,10 +87,10 @@ echo 'POST Install chaincode on Org2'
 echo
 curl -X POST \
   http://localhost:4000/chaincodes \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpbmgiLCJvcmdOYW1lIjoib3JnMiIsImlhdCI6MTQ5MjM5OTcwNH0.iMDVFsE8viKCRwg_VuHuJN5-E1Va6Gem_3pblL1Wb0s' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwib3JnTmFtZSI6Im9yZzIiLCJpYXQiOjE0OTI1NzM5MDZ9.yovKRJlkdf-fsdy72enh9wWiqsd0uSRQWNQ6VKdCaL0' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpbmgiLCJvcmdOYW1lIjoib3JnMiIsImlhdCI6MTQ5MjM5OTcwNH0.iMDVFsE8viKCRwg_VuHuJN5-E1Va6Gem_3pblL1Wb0s' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwib3JnTmFtZSI6Im9yZzIiLCJpYXQiOjE0OTI1NzM5MDZ9.yovKRJlkdf-fsdy72enh9wWiqsd0uSRQWNQ6VKdCaL0' \
   -d '{
 	"peers": ["localhost:8051","localhost:8056"],
 	"chaincodeName":"mycc",
@@ -107,10 +104,10 @@ echo 'POST instantiate chaincode on peer1 of Org1'
 echo
 curl -X POST \
   http://localhost:4000/channels/mychannel/chaincodes \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -d '{
 	"peers": ["localhost:7051"],
 	"chaincodeName":"mycc",
@@ -126,10 +123,10 @@ echo 'POST invoke chaincode on peer1 of Org1'
 echo
 TRX_ID=$(curl -X POST \
   http://localhost:4000/channels/mychannel/chaincodes/mycc \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -d '{
 	"peers": ["localhost:7051"],
 	"chaincodeVersion":"v0",
@@ -144,10 +141,10 @@ echo 'GET query chaincode on peer1 of Org1'
 echo
 curl -X GET \
   'http://localhost:4000/channels/mychannel/chaincodes/mycc?peer=peer1&args=%5B%22query%22%2C%22a%22%5D&chaincodeVersion=v0' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo'
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI'
 echo
 echo
 
@@ -155,10 +152,10 @@ echo 'GET query Block by blockNumber'
 echo
 curl -X GET \
   'http://localhost:4000/channels/mychannel/blocks/1?participatingPeer=peer1' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo'
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI'
 echo
 echo
 
@@ -166,10 +163,10 @@ echo
 echo 'GET query Transaction by TransactionID'
 echo
 curl -X GET http://localhost:4000/channels/mychannel/transactions/$TRX_ID?participatingPeer=peer1 \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo'
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI'
 echo
 echo
 
@@ -182,10 +179,10 @@ echo
 hash='123'
 curl -X GET \
   'http://localhost:4000/channels/mychannel/blocks?hash=$hash&participatingPeer=peer1' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo'
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI'
 echo
 echo
 
@@ -193,10 +190,10 @@ echo 'GET query ChainInfo'
 echo
 curl -X GET \
   'http://localhost:4000/channels/mychannel?participatingPeer=peer1' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo'
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI'
 echo
 echo
 
@@ -204,10 +201,10 @@ echo 'GET query Installed chaincodes'
 echo
 curl -X GET \
   'http://localhost:4000/chaincodes?hostingPeer=peer1&installed=true' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo'
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI'
 echo
 echo
 
@@ -215,10 +212,10 @@ echo 'GET query Instantiated chaincodes'
 echo
 curl -X GET \
   'http://localhost:4000/chaincodes?hostingPeer=peer1&installed=false' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo'
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI'
 echo
 echo
 
@@ -226,10 +223,10 @@ echo 'GET query Channels'
 echo
 curl -X GET \
   'http://localhost:4000/channels?participatingPeer=peer1' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbSIsIm9yZ05hbWUiOiJvcmcxIiwiaWF0IjoxNDkyMzk3OTg5fQ.zMvr5AoksMgJr0yT42N_uy8KhD4d8j5qOfVWkpJfgXo'
+  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI'
 echo
 echo
 

@@ -33,7 +33,7 @@ var createChannel = function (channelName, channelConfigPath, username, orgName)
 	// Acting as a client in org1 when creating the channel
   return helper.getAdminUser(orgName)
 	.then((member) => {
-		//logger.debug('Successfully enrolled user \'admin\'');
+		logger.debug('Successfully enrolled user \'admin\'');
 		// readin the envelope to send to the orderer
 		var request = {
 			envelope : fs.readFileSync(path.join(__dirname, channelConfigPath))
@@ -41,7 +41,7 @@ var createChannel = function (channelName, channelConfigPath, username, orgName)
 		// send to orderer
 		return chain.createChannel(request);
 	}, (err) => {
-		logger.error('Failed to enroll user \''+username+'\'. ' + err);
+		logger.error('Failed to enroll user \'admin\'. Error: ' + err);
 	})
 	.then((response) => {
 		logger.debug(' response ::%j',response);

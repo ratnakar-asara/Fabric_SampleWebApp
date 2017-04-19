@@ -92,18 +92,15 @@ app.post('/users', function(req, res) {
         //password: req.body.password,
         orgName: req.body.orgName
     }, app.get('secret'));
-    var promise = helper.getAdminUser(req.body.orgName);
-    promise.then(function(value) {
-        if (value != null) {
-            res.json({
-                success: true,
-                message: 'Successfully enrolled user "' + req.body.username + '"',
-                token: token
-            });
+    var promise = helper.registerUsers(req.body.username, req.body.orgName);
+    promise.then(function(response) {
+        if (response && typeof response !== 'string') {
+					response.token = token;
+					res.json(response);
         } else {
             res.json({
                 success: false,
-                message: 'Failed to enroll and register user "' + req.body.username + '"'
+                message: response
             });
         }
     });
