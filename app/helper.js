@@ -81,8 +81,6 @@ var setupPeers = function(chain, peers, targets) {
         for (let index in peers) {
             let found = false;
             for (let key in peersList) {
-                //console.log('peersList[key]._endpoint.addr : ' + peersList[key]._endpoint.addr)
-                //console.log('peers[' + index + '] : ' + peers[index]);
                 if (peersList[key]._endpoint.addr === peers[index]) {
                     found = true;
                 }

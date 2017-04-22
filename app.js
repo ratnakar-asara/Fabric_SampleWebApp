@@ -87,6 +87,7 @@ app.post('/users', function(req, res) {
     logger.debug('User name : ' + req.body.username);
     logger.debug('Org name  : ' + req.body.orgName);
     var token = jwt.sign({
+        exp: Math.floor(Date.now() / 1000) + parseInt(config.jwt_expiretime),
         username: req.body.username,
         //TODO: Are we using existing user or to register new users ?
         //password: req.body.password,

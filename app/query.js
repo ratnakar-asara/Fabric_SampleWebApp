@@ -140,8 +140,7 @@ var getBlockByHash = function(peer, hash, username, org) {
     helper.setupPeers(chain, peers, targets);
     return helper.getRegisteredUsers(username, org).then((member) => {
         adminUser = member;
-				//TODO: should we set any primary peer ?
-				//chain.setPrimaryPeer(targets[0]);
+	//chain.setPrimaryPeer(targets[0]);
         return chain.queryBlockByHash(Buffer.from(hash));
     }, (err) => {
         logger.info('Failed to get submitter "' + username + '"');
@@ -171,15 +170,14 @@ var getChainInfo = function(peer, username, org) {
     helper.setupPeers(chain, peers, targets);
     return helper.getRegisteredUsers(username, org).then((member) => {
         adminUser = member;
-				//TODO: should we set any primary peer ?
-				//chain.setPrimaryPeer(targets[0]);
+	//chain.setPrimaryPeer(targets[0]);
         return chain.queryInfo();
     }, (err) => {
         logger.info('Failed to get submitter "' + username + '"');
         return 'Failed to get submitter "' + username + '". Error: ' + err.stack ? err.stack : err;
     }).then((blockchainInfo) => {
         if (blockchainInfo) {
-					  // TODO: Should we save this for testing 'getBlockByHash'  ?
+					  // FIXME: Save this for testing 'getBlockByHash'  ?
 						logger.debug('===========================================');
 						logger.debug(blockchainInfo.currentBlockHash);
 						logger.debug('===========================================');
@@ -208,8 +206,7 @@ var getInstalledChaincodes = function(hostingPeer, installed, username, org) {
     return helper.getRegisteredUsers(username, org).then((member) => {
 			peers.push(helper.getPeerAddressByName(org, hostingPeer));
         adminUser = member;
-				//TODO: should we set any primary peer ?
-				//chain.setPrimaryPeer(targets[0]);
+	//chain.setPrimaryPeer(targets[0]);
 				if (installed === 'true') {
 					return chain.queryInstalledChaincodes(targets[0]);
 				} else {
@@ -256,8 +253,7 @@ var getChannels = function(participatingPeer, username, org) {
     helper.setupPeers(chain, peers, targets);
     return helper.getRegisteredUsers(username, org).then((member) => {
         adminUser = member;
-				//TODO: should we set any primary peer ?
-				//chain.setPrimaryPeer(targets[0]);
+	//chain.setPrimaryPeer(targets[0]);
         return chain.queryChannels(targets[0]);
     }, (err) => {
         logger.info('Failed to get submitter "' + username + '"');

@@ -1,4 +1,4 @@
-# REST Api impmentation for NodeSDK apis
+# Alpha based Sample app using NodeSDK apis
 
 ### Clone this repo
 
@@ -16,7 +16,7 @@ cd RestAPIs4Nodesdk
 You will see the below log when app started
 ```
 info: ****************** SERVER STARTED ************************
-info: **************  http://loclahost:4000  ******************
+info: **************  http://localhost:4000  ******************
 ```
 
 ### How to execute the requests

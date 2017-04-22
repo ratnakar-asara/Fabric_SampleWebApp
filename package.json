@@ -6,8 +6,7 @@
   "keywords": [
     "fabric-client sample app",
     "balance-transfer node sample",
-    "v1.0 fabric nodesdk sample",
-    "alpha based nodesdk sample app"
+    "v1.0 fabric nodesdk sample"
   ],
   "engines": {
     "node": ">=6.9.5",
