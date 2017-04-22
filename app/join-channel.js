@@ -88,7 +88,7 @@ var joinChannel = function (channelName, peers, username, org){
 		}
 	}
 
-	return helper.getAdminUser(org)
+	return helper.getRegisteredUsers(username, org)
 	.then((member) => {
 		logger.info('received member object for user : '+username);
 		user = member;

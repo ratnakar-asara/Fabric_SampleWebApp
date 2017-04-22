@@ -35,7 +35,7 @@ var queryChaincode = function(peer, channelName, chaincodeName, chaincodeVersion
     var chain = helper.getChainForOrg(org);
     var targets = helper.getTargets(peers, org);
     helper.setupPeers(chain, peers, targets);
-    return helper.getAdminUser(org).then((member) => {
+    return helper.getRegisteredUsers(username, org).then((member) => {
         adminUser = member;
         nonce = utils.getNonce();
         tx_id = chain.buildTransactionID(nonce, adminUser);
@@ -79,7 +79,7 @@ var getBlockByNumber = function(peer, blockNumber, username, org) {
     var chain = helper.getChainForOrg(org);
     var targets = helper.getTargets(peers, org);
     helper.setupPeers(chain, peers, targets);
-    return helper.getAdminUser(org).then((member) => {
+    return helper.getRegisteredUsers(username, org).then((member) => {
         adminUser = member;
         return chain.queryBlock(parseInt(blockNumber));
     }, (err) => {
@@ -109,7 +109,7 @@ var getTransactionByID = function(peer, trxnID, username, org) {
     var chain = helper.getChainForOrg(org);
     var targets = helper.getTargets(peers, org);
     helper.setupPeers(chain, peers, targets);
-    return helper.getAdminUser(org).then((member) => {
+    return helper.getRegisteredUsers(username, org).then((member) => {
         adminUser = member;
         return chain.queryTransaction(trxnID);
     }, (err) => {
@@ -138,7 +138,7 @@ var getBlockByHash = function(peer, hash, username, org) {
     var chain = helper.getChainForOrg(org);
     var targets = helper.getTargets(peers, org);
     helper.setupPeers(chain, peers, targets);
-    return helper.getAdminUser(org).then((member) => {
+    return helper.getRegisteredUsers(username, org).then((member) => {
         adminUser = member;
 				//TODO: should we set any primary peer ?
 				//chain.setPrimaryPeer(targets[0]);
@@ -169,7 +169,7 @@ var getChainInfo = function(peer, username, org) {
     var chain = helper.getChainForOrg(org);
     var targets = helper.getTargets(peers, org);
     helper.setupPeers(chain, peers, targets);
-    return helper.getAdminUser(org).then((member) => {
+    return helper.getRegisteredUsers(username, org).then((member) => {
         adminUser = member;
 				//TODO: should we set any primary peer ?
 				//chain.setPrimaryPeer(targets[0]);
@@ -205,7 +205,7 @@ var getInstalledChaincodes = function(hostingPeer, installed, username, org) {
     var chain = helper.getChainForOrg(org);
     var targets = helper.getTargets(peers, org);
     helper.setupPeers(chain, peers, targets);
-    return helper.getAdminUser(org).then((member) => {
+    return helper.getRegisteredUsers(username, org).then((member) => {
 			peers.push(helper.getPeerAddressByName(org, hostingPeer));
         adminUser = member;
 				//TODO: should we set any primary peer ?
@@ -254,7 +254,7 @@ var getChannels = function(participatingPeer, username, org) {
     var chain = helper.getChainForOrg(org);
     var targets = helper.getTargets(peers, org);
     helper.setupPeers(chain, peers, targets);
-    return helper.getAdminUser(org).then((member) => {
+    return helper.getRegisteredUsers(username, org).then((member) => {
         adminUser = member;
 				//TODO: should we set any primary peer ?
 				//chain.setPrimaryPeer(targets[0]);

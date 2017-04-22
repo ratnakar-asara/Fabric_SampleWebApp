@@ -25,8 +25,8 @@ var utils = require('fabric-client/lib/utils.js');
 var Orderer = require('fabric-client/lib/Orderer.js');
 var Peer = require('fabric-client/lib/Peer.js');
 var copService = require('fabric-ca-client/lib/FabricCAClientImpl.js');
-var FabricCAServices = require('fabric-ca-client/lib/FabricCAClientImpl');
-var FabricCAClient = FabricCAServices.FabricCAClient;
+//var FabricCAServices = require('fabric-ca-client/lib/FabricCAClientImpl');
+var FabricCAClient = copService.FabricCAClient;
 var config = require('../config.json');
 var hfc = require('fabric-client');
 hfc.addConfigFile(path.join(__dirname, 'network-config.json'));
@@ -43,15 +43,7 @@ exports.chain1 = chain1;
 exports.chain2 = chain2;
 // need to enroll it with CA server
 var caClient;
-/****************************************************************************/
-// Remove this before comitting the code
-var print = function(message) {
-    logger.debug('=============================================================');
-    logger.debug(message);
-    logger.debug('=============================================================');
-}
-exports.print = print;
-/****************************************************************************/
+
 var setupOrderer = function() {
     let chains = [chain1, chain2];
     chains.forEach(function(chain) {
@@ -89,8 +81,8 @@ var setupPeers = function(chain, peers, targets) {
         for (let index in peers) {
             let found = false;
             for (let key in peersList) {
-                console.log('peersList[key]._endpoint.addr : ' + peersList[key]._endpoint.addr)
-                console.log('peers[' + index + '] : ' + peers[index]);
+                //console.log('peersList[key]._endpoint.addr : ' + peersList[key]._endpoint.addr)
+                //console.log('peers[' + index + '] : ' + peers[index]);
                 if (peersList[key]._endpoint.addr === peers[index]) {
                     found = true;
                 }
@@ -136,7 +128,7 @@ var getTargets = function(peers, org) {
     return targets;
 }
 var getMspID = function(orgName) {
-    print('Msp ID : ' + ORGS[orgName].mspid);
+    logger.debug('Msp ID : ' + ORGS[orgName].mspid);
     return ORGS[orgName].mspid;
 }
 var setCaClient = function(userOrg) {
@@ -144,17 +136,26 @@ var setCaClient = function(userOrg) {
     caClient = new copService(caUrl);
 }
 
-var getAdminUser = function(userOrg) {
+var tlsOptions = {
+    trustedRoots: [],
+    verify: false
+};
+
+var getAdminUser = function(username, userOrg) {
     var users = config.users;
-    var username = users[0].username;
+    //var username = 'user1';//users[0].username;
     var password = users[0].secret;
     var member;
     var client = clientForOrg(userOrg);
     return hfc.newDefaultKeyValueStore({
         path: getKeyStoreForOrg(getOrgName(userOrg))
     }).then((store) => {
+
         client.setStateStore(store);
+        //NOTE: Temporary workaround, as of alpha this is not fixed in node
+        client._userContext = null;
         return client.getUserContext(username).then((user) => {
+
             if (user && user.isEnrolled()) {
                 logger.info('Successfully loaded member from persistence');
                 return user;
@@ -175,69 +176,78 @@ var getAdminUser = function(userOrg) {
                 }).catch((err) => {
                     logger.error('Failed to enroll and persist user. Error: ' + err.stack ? err.stack : err);
                     return null;
-                    //throw new Error('Failed to obtain an enrolled user');
                 });
             }
         });
     });
 };
 
-var registerUsers = function(username, userOrg) {
+var getRegisteredUsers = function(username, userOrg, isJson) {
     var users = config.users;
     var adminUser = users[0].username;
     var adminPassword = users[0].secret;
     var member;
     var client = clientForOrg(userOrg);
-
-    var tlsOptions = {
-               trustedRoots: [],
-               verify: false
-    };
-
-    var cop = new FabricCAServices(ORGS[userOrg].ca, tlsOptions, {keysize: 256, hash: 'SHA2'});
-    var eResult = null;
+    var cop = new copService(ORGS[userOrg].ca, tlsOptions, {keysize: 256, hash: 'SHA2'});
     var enrollmentSecret = null;
     return hfc.newDefaultKeyValueStore({
         path: getKeyStoreForOrg(getOrgName(userOrg))
     }).then((store) => {
          client.setStateStore(store);
-           var req = {
-                enrollmentID: adminUser,
-                enrollmentSecret: adminPassword
-              };
-         return cop.enroll(req)
-                .then((enrollment) => {
-                        eResult = enrollment;
-                        member = new User('admin', client);
-                        return member.setEnrollment(eResult.key, eResult.certificate, ORGS[userOrg].mspid);
-                }
-    )}).then((value) => {
-	                 return cop.register({enrollmentID: username, affiliation: userOrg+'.department1'}, member);
-    }).then((secret) => {
-                  enrollmentSecret = secret;
-                  logger.debug(username+' registered successfully')
-	                return cop.enroll({enrollmentID: username, enrollmentSecret: secret});
-                },(err) => {
-                  logger.debug(username+' failed to register')
-                  return ''+err;
-                   //return 'Failed to register '+username+'. Error: ' + err.stack ? err.stack : err;
-    }).then((message)=>{
-      if (message && typeof message === 'string' && message.includes('Error:')){
-        logger.error(username+' enrollment failed')
-        return message;
-      }
-      logger.debug(username+' enrolled successfully')
-      //client.setUserContext(member);
-      var response = {
-        success: true,
-        secret: enrollmentSecret,
-        message : username +' enrolled Successfully',
-      }
-      return response;
-    }, (err) => {
-      logger.error(username+' enroll failed')
-      return ''+err;
-    });
+         //NOTE: Temporary workaround, as of alpha this is not fixed in node
+         client._userContext = null;
+         return client.getUserContext(username).then((user) => {
+
+             if (user && user.isEnrolled()) {
+                 logger.info('Successfully loaded member from persistence');
+                 return user;
+             } else {
+                 setCaClient(userOrg);
+                 return getAdminUser(adminUser, userOrg).then(
+                   function (adminUserObj){
+                     member = adminUserObj;
+                     return cop.register({enrollmentID: username, affiliation: userOrg+'.department1'}, member);
+                   }).then((secret) => {
+                                 enrollmentSecret = secret;
+                                 logger.debug(username+' registered successfully');
+                                 return cop.enroll({enrollmentID: username, enrollmentSecret: secret});
+                            },(err) => {
+                                 logger.debug(username+' failed to register');
+                                 return ''+err;
+                                  //return 'Failed to register '+username+'. Error: ' + err.stack ? err.stack : err;
+                   }).then((message)=>{
+                     if (message && typeof message === 'string' && message.includes('Error:')){
+                       logger.error(username+' enrollment failed')
+                       return message;
+                     }
+                     logger.debug(username+' enrolled successfully');
+                     client.setUserContext(member);
+                     member = new User(username, client);
+                     member._enrollmentSecret = enrollmentSecret;
+                     return member.setEnrollment(message.key, message.certificate, ORGS[userOrg].mspid);
+                   }).then(()=> {
+                     client.setUserContext(member);
+                    return member;
+                   }, (err) => {
+                     logger.error(username+' enroll failed');
+                     return ''+err;
+                   });;
+             }
+         })
+       }).then((user)=> {
+         if (isJson && isJson === true) {
+           var response = {
+             success: true,
+             secret: user._enrollmentSecret,
+             message : username +' enrolled Successfully',
+           }
+           return response;
+         }
+           return user;
+         },(err) => {
+           logger.error(username+' enroll failed')
+           return ''+err;
+         });
 };
 
 var setupChaincodeDeploy = function() {
@@ -251,7 +261,7 @@ var getLogger = function(moduleName) {
 }
 
 var getOrgName = function(org) {
-    print('Org name : ' + ORGS[org].name);
+    //logger.debug('Org name : ' + ORGS[org].name);
     return ORGS[org].name;
 }
 var getOrderer = function() {
@@ -280,7 +290,7 @@ var getPeerAddressByName = function(org, peer) {
     return address.split("grpcs://")[1];
 }
 
-exports.getAdminUser = getAdminUser;
+exports.getRegisteredUsers = getRegisteredUsers;
 exports.getArgs = getArgs;
 exports.getKeyStoreForOrg = getKeyStoreForOrg;
 exports.getOrgName = getOrgName;
@@ -294,4 +304,4 @@ exports.getChainForOrg = getChainForOrg;
 exports.clientForOrg = clientForOrg;
 exports.setupPeers = setupPeers;
 exports.getPeerAddressByName = getPeerAddressByName;
-exports.registerUsers = registerUsers;
+exports.getRegisteredUsers = getRegisteredUsers;

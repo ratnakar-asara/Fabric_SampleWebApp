@@ -189,11 +189,11 @@ services:
       - orderer0
       - peer2
 
-  couchdb:
-    image: hyperledger/fabric-couchdb:x86_64-1.0.0-alpha
-    image: couchdb
-    ports:
-      - 5984:5984
-    environment:
-      DB_URL: http://localhost:5984/member_db
+#  couchdb:
+#    image: hyperledger/fabric-couchdb:x86_64-1.0.0-alpha
+#    image: couchdb
+#    ports:
+#      - 5984:5984
+#    environment:
+#      DB_URL: http://localhost:5984/member_db
 

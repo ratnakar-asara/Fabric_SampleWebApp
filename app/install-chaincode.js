@@ -47,7 +47,7 @@ var installChaincode = function (peers, chaincodeName, chaincodePath, chaincodeV
 
     logger.info(chain.getPeers());*/
 
-		return helper.getAdminUser(org)
+		return helper.getRegisteredUsers(username,org)
 		.then((member) => {
 		adminUser = member;
 
@@ -87,8 +87,8 @@ var installChaincode = function (peers, chaincodeName, chaincodePath, chaincodeV
 		}
 		if (all_good) {
 			logger.info(util.format('Successfully sent install Proposal and received ProposalResponse: Status - %s', proposalResponses[0].response.status));
-			logger.debug('\n============ Install chaincode on organization '+org+' completed ============\n')
-			return '============ Install chaincode on organization '+org+' completed ============';
+			logger.debug('\nSuccessfully Installed chaincode on organization '+org+'\n')
+			return 'Successfully Installed chaincode on organization '+org;
 		} else {
 			logger.error('Failed to send install Proposal or receive valid response. Response null or status is not 200. exiting...');
 			return 'Failed to send install Proposal or receive valid response. Response null or status is not 200. exiting...';

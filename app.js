@@ -92,7 +92,7 @@ app.post('/users', function(req, res) {
         //password: req.body.password,
         orgName: req.body.orgName
     }, app.get('secret'));
-    var promise = helper.registerUsers(req.body.username, req.body.orgName);
+    var promise = helper.getRegisteredUsers(req.body.username, req.body.orgName, true);
     promise.then(function(response) {
         if (response && typeof response !== 'string') {
 					response.token = token;
@@ -108,6 +108,7 @@ app.post('/users', function(req, res) {
 
 // Create Channel
 app.post('/channels', function(req, res) {
+    logger.info('<<<<<<<<<<<<<<<<< C R E A T E  C H A N N E L >>>>>>>>>>>>>>>>>');
     logger.debug('End point : /channels');
     logger.debug('Channel name : ' + req.body.channelName);
     logger.debug('channelConfigPath : ' + req.body.channelConfigPath); //../artifacts/channel/mychannel.tx
@@ -132,8 +133,8 @@ app.post('/channels', function(req, res) {
 
 // Join Channel
 app.post('/channels/:channelName/peers', function(req, res) {
-    logger.debug('End point : /channels/' + req.params.channelName + '/peers');
-    logger.debug('peers : ' + req.body.peers); // target peers list
+    logger.info('<<<<<<<<<<<<<<<<< J O I N  C H A N N E L >>>>>>>>>>>>>>>>>');
+    logger.debug('peers : ' + req.body.peers);
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     jwt.verify(token, app.get('secret'), function(err, decoded) {
         if (err) {
@@ -155,7 +156,7 @@ app.post('/channels/:channelName/peers', function(req, res) {
 
 // Install chaincode on target peers
 app.post('/chaincodes', function(req, res) {
-    logger.debug('End point : /channels');
+    logger.debug('==================== INSTALL CHAINCODE ==================');
     logger.debug('peers : ' + req.body.peers); // target peers list
     logger.debug('chaincodeName : ' + req.body.chaincodeName);
     logger.debug('chaincodePath  : ' + req.body.chaincodePath);
@@ -181,7 +182,7 @@ app.post('/chaincodes', function(req, res) {
 
 // Instantiate chaincode on target peers
 app.post('/channels/:channelName/chaincodes', function(req, res) {
-    logger.debug('End point : /channels');
+    logger.debug('==================== INSTANTIATE CHAINCODE ==================');
     logger.debug('peers : ' + req.body.peers); // target peers list
     logger.debug('chaincodeName : ' + req.body.chaincodeName);
     logger.debug('chaincodePath  : ' + req.body.chaincodePath);
@@ -207,7 +208,7 @@ app.post('/channels/:channelName/chaincodes', function(req, res) {
 
 // Invoke transaction on chaincode on target peers
 app.post('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) {
-    logger.debug('End point : /channels');
+    logger.debug('==================== INVOKE ON CHAINCODE ==================');
     logger.debug('peers : ' + req.body.peers); // target peers list
     logger.debug('chaincodeName : ' + req.params.chaincodeName);
     logger.debug('Args : ' + req.body.args);
@@ -238,9 +239,9 @@ app.get('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) {
     logger.debug('chaincodeName : ' + req.params.chaincodeName);
     let peer = req.query.peer;
     let args = req.query.args;
-    console.log(args);
     args = args.replace(/'/g, '"');
     args = JSON.parse(args);
+    logger.debug(args);
     let version = req.query.chaincodeVersion;
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     jwt.verify(token, app.get('secret'), function(err, decoded) {

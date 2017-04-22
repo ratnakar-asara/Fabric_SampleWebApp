@@ -23,15 +23,14 @@ var helper = require('./helper.js');
 var logger = helper.getLogger('Create-Channel');
 
 //Attempt to send a request to the orderer with the sendCreateChain method
-//TODO:
-// 1. Better way to format the error messages
 var createChannel = function (channelName, channelConfigPath, username, orgName){
   logger.debug('\n====== Creating Channel \''+channelName+'\' ======\n')
 
 	helper.setupOrderer();
   var chain = helper.getChainForOrg(orgName);
 	// Acting as a client in org1 when creating the channel
-  return helper.getAdminUser(orgName)
+
+  return helper.getRegisteredUsers(username, orgName)
 	.then((member) => {
 		logger.debug('Successfully enrolled user \'admin\'');
 		// readin the envelope to send to the orderer

@@ -41,26 +41,26 @@ var eventhubs = [];
 var allEventhubs = [];
 
 var invokeChaincode = function (peers, channelName, chaincodeName, chaincodeVersion, args, username, org){
+	logger.debug('\n============ invoke transaction on organization '+org+' ============\n')
 	var closeConnections = function(isSuccess) {
 		for(var key in allEventhubs) {
 			var eventhub = allEventhubs[key];
 			if (eventhub && eventhub.isconnected()) {
-				//logger.debug('Disconnecting the event hub');
+				logger.debug('Disconnecting the event hub');
 				eventhub.disconnect();
 			}
 		}
 	}
+		var chain = helper.getChainForOrg(org);
+		helper.setupOrderer();
+		var targets = helper.getTargets(peers, org);
+		helper.setupPeers(chain, peers, targets);
 
-			helper.setupChaincodeDeploy();
-			var chain = helper.getChainForOrg(org);
-			helper.setupOrderer();
-			var targets = helper.getTargets(peers, org);
-			helper.setupPeers(chain, peers, targets);
 			/*for(var index in targets) {
 				chain.addPeer(targets[index]);
 			}*/
 
-      //FIXME: chanfe this to read peer dynamically
+      //FIXME: change this to read peer dynamically
 			let eh = new EventHub();
 			let data = fs.readFileSync(path.join(__dirname, ORGS[org]['peer1']['tls_cacerts']));
 			eh.setPeerAddr(
@@ -74,7 +74,7 @@ var invokeChaincode = function (peers, channelName, chaincodeName, chaincodeVers
 			eventhubs.push(eh);
 			allEventhubs.push(eh);
 
-	return helper.getAdminUser(org)
+	return helper.getRegisteredUsers(username, org)
 	.then((member) => {
 	  adminUser = member;
 

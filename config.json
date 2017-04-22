@@ -1,5 +1,5 @@
 {
-   "host":"loclahost",
+   "host":"localhost",
    "port":"4000",
    "chaincodeId":"mycc",
    "channelName":"mychannel",

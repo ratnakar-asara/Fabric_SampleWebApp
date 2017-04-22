@@ -34,7 +34,6 @@ curl -X POST \
 }'
 echo
 echo
-
 echo 'POST Join channel request ... on Org1'
 echo
 curl -X POST \
@@ -49,7 +48,6 @@ curl -X POST \
 echo
 echo
 
-
 echo 'POST Join channel request ... on Org2'
 echo
 curl -X POST \
@@ -63,7 +61,6 @@ curl -X POST \
 }'
 echo
 echo
-
 
 echo 'POST Install chaincode on Org1'
 echo
@@ -171,20 +168,19 @@ echo
 echo
 
 ############################################################################
-### TODO
-### How to Read HASH value to get the Block details
+### TODO: What to pass to fetch the Block information
 ############################################################################
-echo 'GET query Block by Hash'
-echo
-hash='123'
-curl -X GET \
-  'http://localhost:4000/channels/mychannel/blocks?hash=$hash&participatingPeer=peer1' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
-  -H 'cache-control: no-cache' \
-  -H 'content-type: application/json' \
-  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI'
-echo
-echo
+#echo 'GET query Block by Hash'
+#echo
+#hash=????
+#curl -X GET \
+#  'http://localhost:4000/channels/mychannel/blocks?hash=$hash&participatingPeer=peer1' \
+#  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI' \
+#  -H 'cache-control: no-cache' \
+#  -H 'content-type: application/json' \
+#  -H 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTI1NzM4MjJ9.Zyc8tqJUPfLCWo_iMqGPPEvJG2BHl6EnjN8urpY93dI'
+#echo
+#echo
 
 echo 'GET query ChainInfo'
 echo

@@ -74,7 +74,7 @@ var instantiateChaincode = function (peers, channelName, chaincodeName, chaincod
 			eventhubs.push(eh);
 			allEventhubs.push(eh);
 
-	return helper.getAdminUser(org)
+	return helper.getRegisteredUsers(username, org)
 	.then((member) => {
 	  adminUser = member;
 		// read the config block from the orderer for the chain
