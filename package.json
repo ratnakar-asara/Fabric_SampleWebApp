@@ -12,12 +12,6 @@
     "node": ">=6.9.5",
     "npm": ">=3.10.10"
   },
-  "devDependencies": {
-    "fabric-ca-client": "1.0.0-alpha.0",
-    "fabric-client": "1.0.0-alpha",
-    "log4js": "^0.6.38",
-    "winston": "^2.2.0"
-  },
   "license": "Apache-2.0",
   "dependencies": {
     "body-parser": "^1.17.1",
@@ -26,6 +20,10 @@
     "express": "^4.15.2",
     "express-jwt": "^5.1.0",
     "express-session": "^1.15.2",
+    "fabric-ca-client": ">=1.0.0-alpha <1.0.0-alpha.10",
+    "fabric-client": ">=1.0.0-alpha <1.0.0-alpha.10",
+    "log4js": "^0.6.38",
+    "winston": "^2.2.0",
     "jsonwebtoken": "^7.3.0"
   }
 }
