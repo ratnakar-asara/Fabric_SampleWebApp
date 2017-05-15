@@ -14,8 +14,9 @@ Once you have completed the above setup, you will be provisioned a local network
 * A solo orderer
 * 4 peers (2 peers per Org)
 
-Crypto material has been generated using cryptogen tool from fabric and mounted to all peers, orderer and CA org containers.
-An Orderer genesis block, channel configuration transaction has been pre generated using configtxgen tool and placed them under artifacts folder.
+#### Artifacts:
+* Crypto material (Org Certs) has been generated using cryptogen tool from fabric and mounted to all peers, orderer and CA org containers.
+* An Orderer genesis block, channel configuration transaction has been pre generated using configtxgen tool and placed them under artifacts folder.
 
 
 ### Running the sample program
