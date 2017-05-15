@@ -232,13 +232,12 @@ curl -s -X GET \
 
 You have the ability to change configuration parameters by editing the network-config.json file file.
 
-**IP Address** and **PORT** information If you choose to customize your docker-compose yaml file by hardcoding IP Addresses and PORT information for your peers and orderer, then you MUST also add the identical values into the network-config.json file. The paths and server-hostname shown below will need to be adjusted to match your docker-compose yaml file.
+**IP Address** and **PORT** information If you choose to customize your docker-compose yaml file by hardcoding IP Addresses and PORT information for your peers and orderer, then you MUST also add the identical values into the network-config.json file. The paths shown below will need to be adjusted to match your docker-compose yaml file.
 
 ```
 		"orderer": {
 			"url": "grpcs://x.x.x.x:7050",
-			"server-hostname": "orderer0",
-			"tls_cacerts": "../artifacts/tls/orderer/ca-cert.pem"
+			...
 		},
 		"org1": {
 			"ca": "http://x.x.x.x:7054",
