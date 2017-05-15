@@ -10,13 +10,13 @@ Follow the Getting Started [instructions](http://hyperledger-fabric.readthedocs.
 
 Once you have completed the above setup, you will be provisioned a local network with following configuration:
 
-* 2 ca Orgs
+* 2 CAs
 * A solo orderer
 * 4 peers (2 peers per Org)
 
-#### Artifacts:
-* Crypto material (Org Certs) has been generated using cryptogen tool from fabric and mounted to all peers, orderer and CA org containers.
-* An Orderer genesis block, channel configuration transaction has been pre generated using configtxgen tool and placed them under artifacts folder.
+#### Artifacts
+* Crypto material has been generated using the cryptogen tool from fabric and mounted to all peers, the orderering node and CA org containers.
+* An Orderer genesis block (orderer.block) and channel configuration transaction (mychannel.tx) has been pre generated using the configtxgen tool and placed within the artifacts folder.
 
 
 ### Running the sample program
@@ -31,13 +31,17 @@ cd fabric-sdk-node/examples/balance-transfer
 ```
  
 * This lauches the required network on your local machine
-* Installs alpha node modules
-* Also, starts the node app on PORT 4000
+* Installs the "alpha" tagged node modules 
+* And, starts the node app on PORT 4000
 
 ##### Terminal Window 2
 
 
-Once the application started test the APIs by executing the script **testAPIs.sh**
+In order for the following shell script to properly parse the JSON, you must install ``jq``:
+
+Install [jq](https://stedolan.github.io/jq/) 
+
+With the application started in terminal 1, next, test the APIs by executing the script - **testAPIs.sh**:
 ```
 cd fabric-sdk-node/examples/balance-transfer
 
@@ -45,11 +49,9 @@ cd fabric-sdk-node/examples/balance-transfer
 
 ```
 
-**NOTE:** Install [jq](https://stedolan.github.io/jq/) 
-
 ### Login Request
 
-* Register and enroll new users in Organizations **Org1** and **Org2**
+* Register and enroll new users in Organization - **Org1**:
 
 `curl -s -X POST http://localhost:4000/users -H "cache-control: no-cache" -H "content-type: application/x-www-form-urlencoded" -d 'username=Jim&orgName=org1'`
 
@@ -64,7 +66,7 @@ cd fabric-sdk-node/examples/balance-transfer
 }
 ```
 
-Response contains the success/failure status, enrollment Secret and a JSON Web Token (JWT) the same to be used in Request Headers for sub-sequent requests.
+The response contains the success/failure status, an enrollment Secret and a JSON Web Token (JWT) that is a required string in the Request Headers for subsequent requests.
 
 ### Create Channel request
 
@@ -81,7 +83,7 @@ curl -s -X POST \
 }'
 ```
 
-Please note that the Headers **x-access-token** and **authorization** contains the JWT
+Please note that the Headers **x-access-token** and **authorization** must contain the JWT
 
 ### Join Channel request
 
@@ -148,9 +150,9 @@ curl -s -X POST \
 	"args":["move","a","b","10"]
 }'
 ```
-**NOTE:** Save Transaction ID. 
+**NOTE:** Ensure that you save the Transaction ID in order to pass this string in the subsequent query transactions. 
 
-### Query
+### Chaincode Query
 
 ```
 curl -s -X GET \
@@ -181,7 +183,7 @@ curl -s -X GET http://localhost:4000/channels/mychannel/transactions/TRX_ID?peer
   -H "content-type: application/json" \
   -H "x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI"
 ```
-**NOTE**: Here TRX_ID is from any previous transaction
+**NOTE**: Here the TRX_ID can be from any previous invoke transaction
 
 
 ### Query ChainInfo
@@ -230,14 +232,17 @@ curl -s -X GET \
 
 ### Network configuration considerations
 
-You have the ability to change configuration parameters by editing the network-config.json file file.
+You have the ability to change configuration parameters by editing the network-config.json file.
 
-**IP Address** and **PORT** information If you choose to customize your docker-compose yaml file by hardcoding IP Addresses and PORT information for your peers and orderer, then you MUST also add the identical values into the network-config.json file. The paths shown below will need to be adjusted to match your docker-compose yaml file.
+#### IP Address** and PORT information 
+
+If you choose to customize your docker-compose yaml file by hardcoding IP Addresses and PORT information for your peers and orderer, then you MUST also add the identical values into the network-config.json file. The paths shown below will need to be adjusted to match your docker-compose yaml file.
 
 ```
 		"orderer": {
 			"url": "grpcs://x.x.x.x:7050",
-			...
+			"server-hostname": "orderer0",
+			"tls_cacerts": "../artifacts/tls/orderer/ca-cert.pem"
 		},
 		"org1": {
 			"ca": "http://x.x.x.x:7054",
@@ -267,10 +272,13 @@ You have the ability to change configuration parameters by editing the network-c
 
 ```
 
-#### Discover IP Address To retrieve the IP Address for one of your network entities, issue the following command:
+#### Discover IP Address 
 
-##### this will return the IP Address for peer0
+To retrieve the IP Address for one of your network entities, issue the following command:
+
+
 
 ```
+# this will return the IP Address for peer0
 docker inspect peer0 | grep IPAddress
 ```
